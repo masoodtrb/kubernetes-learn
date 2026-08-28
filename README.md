@@ -13,6 +13,7 @@
 
 | فایل | نقش |
 |------|-----|
+| [intro-kubernetes-slides.md](./intro-kubernetes-slides.md) | اسلایدهای دورهٔ ویدئویی «معرفی Kubernetes» (۱۰ ویدئو، مقدمهٔ مفهومی پیش از بخش عملی) |
 | [00-conductor.md](./00-conductor.md) | کنداکتور کل دوره، چک‌لیست آماده‌سازی، معیار برگزاری جلسه ۲ |
 | [session-01.md](./session-01.md) | ارائه کامل جلسه ۱ با تایم‌باکس ۶۰ دقیقه + YAML و kubectl |
 | [session-02-outline.md](./session-02-outline.md) | اسکلت جلسه ۲: Service، Ingress، ConfigMap/Secret |
