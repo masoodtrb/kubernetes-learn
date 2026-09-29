@@ -3,7 +3,7 @@
 **مدت:** ۹۰ دقیقه  
 **هدف جلسه:** بفهمیم Docker چرا آمد، تفاوتش با VM چیست، Dockerfile ساده تا نسبتاً حرفه‌ای برای فرانت بنویسیم، چند سرویس را با Compose بالا بیاوریم، و Swarm را به‌عنوان مقدمهٔ ارکستراسیون (پل به Kubernetes) بشناسیم.
 
-**فایل‌های مرتبط:** [کنداکتور](./00-conductor.md) · [تکلیف](./homework.md) · [دموها](./demo/)
+**فایل‌های مرتبط:** [کنداکتور](./00-conductor.md) · [تکلیف](./homework.md) · [چیت‌شیت دستورات](./commands.md) · [دموها](./demo/)
 
 ---
 
@@ -14,6 +14,7 @@
   1. بخش پیشرفته Dockerfile → ۳ دقیقه بولت
   2. دمو Swarm زنده نکنید؛ YAML را روی صفحه بخوانید
   3. تاریخچه را به ۳ دقیقه فشرده کنید
+  4. جیب «دستورات پرکاربرد» → فقط جدول را نشان دهید و رد شوید (لیست کامل در [commands.md](./commands.md))
 - اگر وقت زیاد آمد: یک `COPY` اشتباه را با `docker history` debug کنید، یا سرویس دوم به Compose اضافه کنید.
 
 ---
@@ -204,6 +205,33 @@ docker images
 docker stop <container_id>
 ```
 
+### جیب دستورات پرکاربرد (۲–۳ دقیقه)
+
+> اگر وقت کم است: همین جدول را روی صفحه بگذارید، یک «بگو» بگویید، و بروید سراغ multi-stage. لیست کامل + Compose/Swarm در [commands.md](./commands.md) است.
+
+| دستور | چه می‌کند | مثال کوتاه |
+|--------|-----------|------------|
+| `docker pull` | Image از Registry | `docker pull nginx:1.27-alpine` |
+| `docker build -t …` | ساخت Image | `docker build -t fe-docker-simple .` |
+| `docker images` | لیست Imageها | `docker images` |
+| `docker run` | روشن کردن Container | `docker run --rm -p 8080:80 fe-docker-simple` |
+| `docker ps` / `ps -a` | لیست در حال اجرا / همه | `docker ps` |
+| `docker stop` / `rm` / `rmi` | توقف / پاک Container / پاک Image | `docker stop <id>` |
+| `docker logs` | لاگ Container | `docker logs -f <id>` |
+| `docker exec -it` | شل داخل Container | `docker exec -it <id> sh` |
+| `docker inspect` | جزئیات JSON (مختصر) | `docker inspect <id>` |
+
+فلگ‌های روزمرهٔ `run`: `-p` پورت · `-d` پس‌زمینه · `--rm` پاک بعد از stop · `-v` volume · `--name` نام · `-e` env
+
+### بگو
+
+> این‌ها دستوراتی‌اند که هر روز بهشان برمی‌خورید. امروز در دمو زنده چندتایشان را زدید؛ بقیه را بعداً از چیت‌شیت دوره مرور کنید — لازم نیست الان همه را حفظ کنید.
+
+### برای فرانت یعنی چه؟
+
+- `build` / `run` / `ps` / `logs` چرخهٔ روزانهٔ دیباگ Image فرانت است
+- `-p 8080:80` یعنی «روی لپ‌تاپ ۸۰۸۰، داخل Container هنوز ۸۰» — در semipro هم `8081`، advanced `8082`
+
 ---
 
 ## ۴۰–۵۰ دقیقه — Dockerfile نیمه‌حرفه‌ای (multi-stage)
@@ -374,6 +402,8 @@ docker compose ps
 docker compose down
 ```
 
+دستورات بیشتر Compose (`up -d`, `logs`, `exec`, …): [commands.md](./commands.md).
+
 ---
 
 ## ۷۰–۸۵ دقیقه — Docker Swarm (مقدمهٔ ارکستراسیون)
@@ -465,7 +495,8 @@ docker stack rm fe-swarm
 جزئیات کامل در [homework.md](./homework.md) — خلاصه برای گفتن:
 
 > از `demo/semipro` یک Image بسازید و اجرا کنید؛ بعد با Compose در `demo/compose` فرانت + API را بالا بیاورید و اسکرین/خروجی بیاورید.  
-> چالش اختیاری: یک تغییر کوچک در advanced (مثلاً متن صفحه) + rebuild با توضیح اینکه کدام لایه cache خورد.
+> چالش اختیاری: یک تغییر کوچک در advanced (مثلاً متن صفحه) + rebuild با توضیح اینکه کدام لایه cache خورد.  
+> چیت‌شیت دستورات: [commands.md](./commands.md)
 
 ### نظرسنجی (در چت یا فرم)
 
@@ -492,22 +523,34 @@ docker stack rm fe-swarm
 
 ## ضمیمه — چیت‌شیت Docker این جلسه
 
+مرجع کامل قابل‌چاپ: **[commands.md](./commands.md)** (Image/Container، فلگ‌ها، Compose، Swarm کوتاه).
+
 ```bash
 docker version
+docker pull <image>
 docker build -t <name> .
 docker images
-docker run --rm -p HOST:CONTAINER <image>
+docker run --rm -d --name <n> -p HOST:CONTAINER -e KEY=val -v … <image>
 docker ps
+docker ps -a
 docker logs <container>
+docker exec -it <container> sh
+docker inspect <container>
 docker stop <container>
+docker rm <container>
+docker rmi <image>
 
 docker compose up --build
+docker compose up -d
 docker compose ps
+docker compose logs -f
+docker compose exec <service> sh
 docker compose down
 
 docker swarm init
 docker stack deploy -c stack.yaml <name>
 docker stack services <name>
+docker service ls
 docker service ps <stack>_<service>
 docker stack rm <name>
 ```

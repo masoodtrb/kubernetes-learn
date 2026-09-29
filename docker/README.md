@@ -9,7 +9,7 @@
 1. [00-conductor.md](./00-conductor.md) را یک‌بار کامل بخوانید (تایم‌باکس، cut priority، چک‌لیست).
 2. جلسه را از روی [session-01.md](./session-01.md) جلو ببرید؛ همان فایل اسکریپت ارائه است.
 3. یک روز قبل، دموهای داخل [demo/](./demo/) را روی ماشین ارائه build/run کنید.
-4. پایان جلسه تکلیف را از [homework.md](./homework.md) اعلام کنید.
+4. پایان جلسه تکلیف را از [homework.md](./homework.md) اعلام کنید؛ چیت‌شیت دستورات را از [commands.md](./commands.md) لینک دهید.
 
 ## فهرست فایل‌ها
 
@@ -17,6 +17,7 @@
 |------|-----|
 | [00-conductor.md](./00-conductor.md) | کنداکتور ۹۰ دقیقه‌ای، آماده‌سازی، معیار آمادگی برای K8s |
 | [session-01.md](./session-01.md) | اسکریپت کامل ارائه با تایم‌باکس + بگو + دمو |
+| [commands.md](./commands.md) | چیت‌شیت دستورات پرکاربرد (قابل‌چاپ؛ progressive disclosure) |
 | [homework.md](./homework.md) | تکلیف بعد از جلسه با معیار پذیرش |
 | [demo/simple](./demo/simple/) | Dockerfile ساده (nginx + static) |
 | [demo/semipro](./demo/semipro/) | multi-stage Node → nginx |
@@ -31,7 +32,7 @@
 | ۰–۵ | خوش‌آمد |
 | ۵–۱۵ | تاریخچه |
 | ۱۵–۳۰ | Docker در برابر Virtualization |
-| ۳۰–۵۵ | Dockerfile ساده → نیمه → پیشرفته |
+| ۳۰–۵۵ | Dockerfile ساده → نیمه → پیشرفته (جیب دستورات ~دقیقهٔ ۳۸) |
 | ۵۵–۷۰ | Compose |
 | ۷۰–۸۵ | Swarm (پل به K8s) |
 | ۸۵–۹۰ | جمع‌بندی و تکلیف |
