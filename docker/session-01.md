@@ -221,11 +221,18 @@ EXPOSE 80
 | کم کردن لایهٔ مخفی | secrets را در `RUN` با ARG باقی نگذارید |
 | Health | برای سرویس‌های واقعی بعداً healthcheck بگذارید |
 
-### نمونهٔ پیشرفته‌تر — اشاره‌ای به `demo/advanced/`
+### نمونهٔ پیشرفته‌تر — `demo/advanced/`
 
 - `.dockerignore`
-- کپی فقط فایل‌های لازم
-- (اختیاری) اجرا با کاربر غیر root روی nginx سفارشی یا image مناسب
+- multi-stage + `build.js`
+- `USER nginx` و listen روی پورت `8080` (بدون root)
+- `HEALTHCHECK`
+
+```bash
+cd demo/advanced
+docker build -t frontend-advanced:1 .
+docker run --rm -p 8082:8080 frontend-advanced:1
+```
 
 ### بگو
 
