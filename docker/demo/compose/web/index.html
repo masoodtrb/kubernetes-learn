@@ -1,17 +1,65 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
-<head>
-  <meta charset="utf-8" />
-  <title>Compose Demo</title>
-  <style>
-    body { font-family: system-ui, sans-serif; max-width: 40rem; margin: 3rem auto; padding: 0 1rem; }
-    code { background: #f2f2f2; padding: 0.1rem 0.35rem; }
-    pre { background: #f7f7f7; padding: 0.75rem; overflow: auto; }
-  </style>
-</head>
-<body>
-  <h1>Docker Compose Demo</h1>
-  <p>سرویس <code>web</code> (nginx) این صفحه را سرو می‌کند و مسیر <code>/api/</code> را به سرویس <code>api</code> پروکسی می‌کند.</p>
-  <p>امتحان: <a href="/api/hello"><code>/api/hello</code></a></p>
-</body>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Compose Demo — Frontend</title>
+    <style>
+      body {
+        font-family: system-ui, sans-serif;
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        background: linear-gradient(155deg, #1e1b4b, #312e81);
+        color: #e0e7ff;
+      }
+      main {
+        text-align: center;
+        padding: 2rem;
+        max-width: 28rem;
+      }
+      pre {
+        text-align: right;
+        background: rgba(0, 0, 0, 0.35);
+        padding: 1rem;
+        border-radius: 8px;
+        overflow: auto;
+        direction: ltr;
+      }
+      button {
+        margin-top: 1rem;
+        padding: 0.6rem 1.2rem;
+        border: 0;
+        border-radius: 6px;
+        background: #a5b4fc;
+        color: #1e1b4b;
+        font-weight: 600;
+        cursor: pointer;
+      }
+      a { color: #c7d2fe; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Compose: frontend + mock-api</h1>
+      <p>سرویس <code>web</code> این صفحه را سرو می‌کند و <code>/api/</code> را به سرویس <code>api</code> پروکسی می‌کند.</p>
+      <p>یا مستقیم: <a href="/api/hello"><code>/api/hello</code></a></p>
+      <button id="btn" type="button">فراخوانی API</button>
+      <pre id="out">هنوز درخواستی نزده‌اید.</pre>
+    </main>
+    <script>
+      document.getElementById("btn").addEventListener("click", async () => {
+        const out = document.getElementById("out");
+        out.textContent = "loading…";
+        try {
+          const res = await fetch("/api/hello");
+          const data = await res.json();
+          out.textContent = JSON.stringify(data, null, 2);
+        } catch (err) {
+          out.textContent = String(err);
+        }
+      });
+    </script>
+  </body>
 </html>

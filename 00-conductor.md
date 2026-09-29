@@ -17,8 +17,8 @@
 
 | مورد | سطح | توضیح |
 |------|------|--------|
-| مفهوم Container / Image | مفهومی | کافی است بدانند «اپ داخل باکس اجرا می‌شود» |
-| دوره Docker چپتر | توصیه‌شده | پوشهٔ [`docker/`](./docker/) — Dockerfile، Compose، مقدمهٔ Swarm |
+| مفهوم Container / Image | مفهومی / عملی | ترجیحاً دورهٔ [Docker zero-to-hero](./docker/README.md) قبل از این جلسه |
+| دوره Docker چپتر | توصیه‌شده | [`docker/session-01.md`](./docker/session-01.md) — Dockerfile، Compose، مقدمهٔ Swarm |
 | ترمینال پایه | عملی | `cd`, کپی دستور، خواندن خروجی |
 | Node.js / npm | اختیاری | فقط اگر دمو اپ فرانت سفارشی باشد |
 | کلاستر لوکال | برای تکلیف | Minikube یا Kind یا Docker Desktop Kubernetes |

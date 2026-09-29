@@ -1,13 +1,21 @@
-# دمو Swarm — Stack حداقلی
+# دمو Swarm (مقدماتی) — ارکستراسیون سبک روی Docker
 
 ```bash
-docker swarm init   # اگر هنوز Swarm نیست
+# یک‌بار روی ماشین دمو
+docker swarm init
+
+# دیپلوی Stack
 cd docker/demo/swarm
-docker stack deploy -c stack.yaml frontend-swarm
+docker stack deploy -c stack.yaml fe-swarm
+
+# مشاهده
+docker stack services fe-swarm
 docker service ls
-docker service ps frontend-swarm_web
-docker stack rm frontend-swarm
+docker service ps fe-swarm_web
+
+# پاکسازی
+docker stack rm fe-swarm
+# اختیاری: docker swarm leave --force
 ```
 
-مرورگر بعد از deploy: http://localhost:8080  
-`replicas: 2` را در `docker service ps` نشان دهید.
+مرورگر (بعد از Ready شدن Taskها): http://localhost:8084

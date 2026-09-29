@@ -1,10 +1,13 @@
+# دو سرویس: frontend (nginx) + mock API (Node)
+# نام سرویس api در شبکهٔ Compose به‌عنوان hostname قابل resolve است
+
 services:
   web:
     build:
       context: .
       dockerfile: Dockerfile.web
     ports:
-      - "8080:80"
+      - "8083:80"
     depends_on:
       - api
 
@@ -12,5 +15,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.api
+    # پورت داخل شبکهٔ Compose؛ از بیرون لازم نیست باز باشد
     expose:
       - "3000"

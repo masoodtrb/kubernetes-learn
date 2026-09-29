@@ -1,17 +1,20 @@
-# جلسه ۱ — Docker Zero to Hero برای فرانت‌اند
+# جلسه Docker — از صفر تا قابل‌استفاده (چپتر فرانت)
 
 **مدت:** ۹۰ دقیقه  
-**هدف جلسه:** از تاریخچه و تفاوت Container با VM شروع کنیم، Dockerfile ساده تا پیشرفته برای فرانت بنویسیم، Compose را برای چند سرویس ببینیم، و با Swarm یک پل ذهنی به ارکستراسیون (و بعداً Kubernetes) بسازیم.
+**هدف جلسه:** بفهمیم Docker چرا آمد، تفاوتش با VM چیست، Dockerfile ساده تا نسبتاً حرفه‌ای برای فرانت بنویسیم، چند سرویس را با Compose بالا بیاوریم، و Swarm را به‌عنوان مقدمهٔ ارکستراسیون (پل به Kubernetes) بشناسیم.
 
-**فایل‌های مرتبط:** [کنداکتور](./00-conductor.md) · [تکلیف](./homework.md) · [demo/](./demo/)
+**فایل‌های مرتبط:** [کنداکتور](./00-conductor.md) · [تکلیف](./homework.md) · [دموها](./demo/)
 
 ---
 
 ## راهنمای ارائه‌دهنده
 
 - این فایل اسکریپت ارائه است: بخش‌های **بگو** را تقریباً همان‌طور بگویید؛ بلوک‌های کد را روی صفحه نشان دهید.
-- اگر وقت کم آمد: اولویت حذف در [کنداکتور](./00-conductor.md) — اول Dockerfile پیشرفته، بعد دمو زندهٔ Swarm.
-- اگر وقت زیاد آمد: یک لایهٔ cache اشتباه را با `docker history` با هم debug کنید.
+- اگر وقت کم آمد (اولویت حذف از [کنداکتور](./00-conductor.md)):
+  1. بخش پیشرفته Dockerfile → ۳ دقیقه بولت
+  2. دمو Swarm زنده نکنید؛ YAML را روی صفحه بخوانید
+  3. تاریخچه را به ۳ دقیقه فشرده کنید
+- اگر وقت زیاد آمد: یک `COPY` اشتباه را با `docker history` debug کنید، یا سرویس دوم به Compose اضافه کنید.
 
 ---
 
@@ -19,20 +22,23 @@
 
 ### اسلاید / بولت
 
-- موضوع: Docker از صفر تا سطح قابل‌استفاده برای چپتر فرانت
-- امروز: تاریخچه → VM در برابر Container → Dockerfile → Compose → Swarm
-- بعد از این جلسه: آماده‌اید برای دورهٔ Kubernetes در ریشهٔ همین ریپو
+- موضوع: Docker برای چپتر فرانت (قبل از Kubernetes)
+- امروز یاد نمی‌گیریم «کل Docker ecosystem» را؛ یاد می‌گیریم **مدل ذهنی درست** + **اولین Image فرانت** + **Compose** + **نگاه به Swarm**
+- خروجی جلسه: بتوانید بگویید Image ≠ Container، یک Dockerfile multi-stage بخوانید، و دو سرویس را با Compose بالا بیاورید
 
 ### بگو
 
-> هدف این نیست که DevOps شوید. هدف این است که Image بسازید، Container اجرا کنید، چند سرویس را با Compose بالا بیاورید، و وقتی می‌گوییم «روی Swarm / کلاستر رفت» مدل ذهنی داشته باشید.
+> هدف این جلسه این نیست که DevOps شوید. هدف این است که وقتی می‌گوییم «فرانت داخل Container رفت»، دقیقاً بدانید Image چیست، Container چیست، Dockerfile چه کار می‌کند، و چرا بعداً سراغ Kubernetes می‌رویم.
 
 ### چک سریع اتاق
 
-1. Docker Desktop یا Docker Engine روی ماشینتان نصب است؟
-2. تا حالا `Dockerfile` نوشته‌اید؟
+از شرکت‌کنندگان بپرسید (دست بالا):
 
-اگر اکثریت Docker ندارند: بگویید امروز با دمو روی ماشین ارائه‌دهنده جلو می‌رویم؛ تکلیف را بعداً روی ماشین خودشان انجام دهند.
+1. تا حالا `docker run` زده‌اید؟
+2. Dockerfile نوشته‌اید؟
+3. Docker Compose دیده‌اید؟
+
+اگر اکثریت هیچ‌کدام را نزده‌اند: ۱ دقیقه بگویید «Image مثل کلاس است، Container مثل instance در حال اجرا».
 
 ### چک محیط (ارائه‌دهنده)
 
@@ -41,34 +47,36 @@ docker version
 docker compose version
 ```
 
+اگر روی ماشین دمو کار نکرد: پلن B (اسکرین/خروجی ازپیش‌گرفته) را آماده کنید.
+
 ---
 
 ## ۵–۱۵ دقیقه — تاریخچهٔ کوتاه
 
-### اسلاید: خط زمان فشرده
+### اسلاید / بولت — خط زمان ذهنی
 
-| roughly | چه شد؟ |
-|---------|--------|
-| قبل از ۲۰۱۳ | جداسازی بیشتر با VM؛ استقرار سنگین و کند |
-| ۲۰۱۳ | Docker عمومی شد؛ بسته‌بندی اپ به‌صورت Image رایج شد |
-| بعد از آن | اکوسیستم: Registry، Compose، Swarm، بعداً Kubernetes |
-| امروز | Container زبان مشترک Dev / Ops / Frontend deploy |
+| دوره | ایده | دردسر رایج |
+|------|------|-------------|
+| قبل از Container | اپ روی سرور یا VM نصب می‌شود | «روی سیستم من کار می‌کند» |
+| Linux containers (cgroups / namespaces) | ایزوله‌سازی سبک فرایندها | ابزار استاندارد برای همه نبود |
+| ۲۰۱۳ — Docker | بسته‌بندی Image + UX ساده برای developer | Container برای همه قابل‌لمس شد |
+| بعد از Docker | Compose، Registry، ارکستراسیون (Swarm، بعد Kubernetes) | «چطور صدها Container را مدیریت کنیم؟» |
 
 ### بگو
 
-> ایدهٔ اصلی جدید نبود (جداسازی پروسس در لینوکس از قبل بود). کاری که Docker کرد: **DX** را ساده کرد — یک فایل، یک Image، یک دستور اجرا، تقریباً همه‌جا یکسان.
+> Docker اختراع‌کنندهٔ مفهوم Container در لینوکس نبود؛ کاری که کرد این بود که **ساخت، اشتراک و اجرای** Container را برای برنامه‌نویس ساده کرد. برای همین در تیم‌های فرانت هم فراگیر شد: یک Dockerfile، یک Image، همه همان خروجی را می‌گیرند.
 
 ### برای فرانت یعنی چه؟
 
-- `npm run build` + آپلود دستی فایل‌ها → Image قابل‌تکرار
-- «روی سیستم من کار می‌کند» کمتر می‌شود
-- همان آرتیفکت از لپ‌تاپ تا سرور (یا کلاستر)
+- `npm run build` + nginx داخل Image → همان آرتیفکت روی لپ‌تاپ، CI و سرور
+- وابستگی به «نسخه Node روی ماشین همکار» کمتر می‌شود
+- زبان مشترک با Backend / DevOps برای دیپلوی
 
 ### آنچه امروز عمداً عمیق نمی‌شویم
 
-- جزئیات cgroup / namespace در کرنل
-- مقایسهٔ کامل Podman / containerd
-- Production hardening کامل
+- جزئیات kernel (cgroups / namespaces) مگر سوال بیاید
+- تاریخچهٔ کامل LXC / rkt / Podman
+- مقایسهٔ تجاری Docker Inc با جایگزین‌ها
 
 این‌ها را در پارکینگ سوالات بنویسید.
 
@@ -76,59 +84,78 @@ docker compose version
 
 ## ۱۵–۳۰ دقیقه — Docker در برابر سایر Virtualizationها
 
-### دیاگرام ذهنی
+### اسلاید: VM در برابر Container
 
 ```text
 VM:
-Hardware → Host OS → Hypervisor → Guest OS + App
-                       (هر VM یک OS کامل)
+  Hypervisor
+  └── Guest OS کامل
+      └── اپ شما
 
 Container:
-Hardware → Host OS → Docker Engine → Container (App + libs)
-                       (کرنل مشترک؛ ایزولهٔ سبک)
+  Host OS (یک kernel مشترک)
+  └── Container (ایزوله‌سازی فرایند + فایل‌سیستم خود)
+      └── اپ شما
 ```
 
-### جدول مقایسه
+### جدول مقایسهٔ سریع
 
-| | Virtual Machine | Container (Docker) |
-|--|-----------------|---------------------|
-| سیستم‌عامل مهمان | معمولاً بله (کامل) | خیر؛ کرنل میزبان مشترک |
-| حجم / استارت | سنگین‌تر / کندتر | سبک‌تر / سریع‌تر |
-| ایزولاسیون | قوی‌تر در سطح سخت‌افزار/هایپروایزر | قوی در سطح پروسس؛ مدل تهدید متفاوت |
-| واحد بسته‌بندی | دیسک VM / template | **Image** → **Container** |
-| مناسب برای | ایزولهٔ قوی، OS متفاوت | اپ و سرویس‌های پرتعداد |
+| موضوع | VM | Container (Docker) |
+|--------|----|---------------------|
+| سیستم‌عامل مهمان | معمولاً کامل | معمولاً ندارد؛ از kernel میزبان استفاده می‌کند |
+| حجم / سرعت استارت | سنگین‌تر، کندتر | سبک‌تر، معمولاً ثانیه‌ای |
+| ایزوله‌سازی | قوی‌تر در سطح سخت‌افزار/هایپروایزر | قوی در سطح فرایند؛ مدل تهدید فرق دارد |
+| مناسب برای | چند OS مختلف روی یک سخت‌افزار | بسته‌بندی و اجرای یکسان اپ |
+| واحد کار | ماشین مجازی | Image → Container |
 
 ### بگو
 
-> اشتباه رایج: «Container همان VM سبک است.»  
-> از نظر *احساس* شبیه است (یک باکس جدا)، از نظر *معماری* فرق دارد: بدون Guest OS کامل.
-
-### تعاریف یک‌خطی
-
-| مفهوم | یک خط |
-|--------|--------|
-| **Image** | قالب فقط‌خواندنی اپ (لایه‌لایه) |
-| **Container** | instance در حال اجرای یک Image |
-| **Dockerfile** | دستور پخت Image |
-| **Registry** | انبار Imageها (مثلاً Docker Hub) |
-| **Volume** | دادهٔ پایدار بیرون از لایهٔ قابل‌حذف Container |
-| **Network** | چگونه Containerها همدیگر / بیرون را می‌بینند |
+> اشتباه رایج: «Container همان VM سبک است.» از نظر تجربهٔ developer شبیه هم به نظر می‌رسند، ولی مدل فنی فرق دارد: Container یک **فرایند ایزوله** روی kernel مشترک است، نه یک ماشین کامل با OS جدا.
 
 ### تشبیه برای فرانت
 
-- **Image** ≈ build آرتیفکت نسخه‌دار (`dist` داخل یک باکس)
-- **Container** ≈ یک instance در حال اجرا از همان build
-- **Tag** (`my-app:1.2.0`) ≈ شماره نسخهٔ قابل‌ارجاع
+- **VM** ≈ یک لپ‌تاپ کامل مجازی با ویندوز/لینوکس خودش
+- **Image** ≈ zip ساخته‌شده از `dist` + runtime لازم (مثل nginx)
+- **Container** ≈ یک instance در حال اجرای آن zip
+- **Registry** ≈ جایی که Image را publish/pull می‌کنید (مثل npm registry، اما برای Image)
+
+### اسلاید / بولت — اصطلاحات رسمی که باید بمانند
+
+| اصطلاح | یک خط |
+|--------|--------|
+| **Image** | قالب فقط‌خواندنی اپ (لایه‌لایه) |
+| **Container** | instance در حال اجرا از یک Image |
+| **Dockerfile** | دستورالعمل ساخت Image |
+| **Registry** | انبار Imageها (مثلاً Docker Hub) |
+| **Volume** | دادهٔ پایدار بیرون از لایه‌های Container |
+| **Network** | شبکهٔ مجازی بین Containerها |
+
+### برای فرانت یعنی چه؟
+
+- دیپلوی فرانت = ساخت Image از build استاتیک، نه SSH و کپی دستی `dist`
+- محیط staging و production از یک Dockerfile (یا نزدیک به آن) می‌آیند
+- وقتی Backend می‌گوید «پورت داخل Container»، یعنی پورت اپ داخل آن باکس — نه لزوماً پورت لپ‌تاپ شما
+
+### مینی‌چک فهم (۱ دقیقه)
+
+از اتاق بپرسید:
+
+> اگر Image را پاک کنیم ولی Container در حال اجرا باشد، معمولاً چه می‌شود؟  
+> (پاسخ کوتاه: Container در حال اجرا از لایه‌های Image استفاده می‌کند؛ حذف Image ممکن است تا بعد از stop محدود شود — مهم این است که **منبع حقیقت برای ساخت دوباره Dockerfile/Image است**.)
+
+اگر بحث طول کشید، به پارکینگ ببرید و جلو بروید.
 
 ---
 
 ## ۳۰–۴۰ دقیقه — Dockerfile ساده + دمو
 
-### هدف
+### اسلاید / بولت
 
-یک صفحهٔ استاتیک را با `nginx` در Image بگذاریم و اجرا کنیم.
+- Dockerfile = دستورات ساخت Image از بالا به پایین
+- هر دستور معمولاً یک **لایه (layer)** می‌سازد
+- برای فرانت سطح صفر: فایل استاتیک + Image پایهٔ `nginx`
 
-### فایل — `demo/simple/Dockerfile`
+### فایل دمو — `demo/simple/Dockerfile`
 
 ```dockerfile
 FROM nginx:1.27-alpine
@@ -136,16 +163,18 @@ COPY index.html /usr/share/nginx/html/index.html
 EXPOSE 80
 ```
 
-### `demo/simple/index.html`
+### بگو (روی Dockerfile)
 
-صفحهٔ خیلی کوتاه با عنوان «Frontend Docker Demo».
+> - `FROM` یعنی از کدام Image پایه شروع می‌کنیم  
+> - `COPY` فایل‌های ماشین شما را داخل Image می‌گذارد  
+> - `EXPOSE` بیشتر مستندسازی است؛ به‌تنهایی پورت لپ‌تاپ را باز نمی‌کند — `-p` در `docker run` این کار را می‌کند
 
-### دستورات دمو
+### دمو زنده
 
 ```bash
-cd demo/simple
-docker build -t frontend-simple:1 .
-docker run --rm -p 8080:80 frontend-simple:1
+cd docker/demo/simple
+docker build -t fe-docker-simple .
+docker run --rm -p 8080:80 fe-docker-simple
 ```
 
 مرورگر: `http://localhost:8080`
@@ -157,107 +186,139 @@ docker ps
 docker images
 ```
 
+از اتاق بخواهید خروجی `docker ps` را با هم بخوانند: نام Image، پورت `8080->80`، وضعیت `Up`.
+
 ### بگو
 
-> `FROM` پایه را می‌آورد، `COPY` فایل شما را داخل Image می‌گذارد، `docker run` یک Container از آن Image می‌سازد. پورت `8080:80` یعنی روی لپ‌تاپ ۸۰۸۰ → داخل Container پورت ۸۰.
+> `docker build` Image می‌سازد. `docker run` از آن Image یک Container روشن می‌کند. این همان تفاوت کلاس و instance است.
 
 ### برای فرانت یعنی چه؟
 
-حتی بدون Node داخل Image نهایی، می‌توانید خروجی استاتیک را سرو کنید — الگوی رایج SPA.
+- حتی بدون Node داخل Image نهایی، می‌توانید `index.html` یا خروجی Vite/Webpack را با nginx سرو کنید
+- پورت `8080` روی لپ‌تاپ شماست؛ داخل Container هنوز `80` است
+
+### پاکسازی سریع
+
+```bash
+# Ctrl+C روی container foreground، یا:
+docker stop <container_id>
+```
 
 ---
 
 ## ۴۰–۵۰ دقیقه — Dockerfile نیمه‌حرفه‌ای (multi-stage)
 
-### مشکل نسخهٔ ساده
+### اسلاید / بولت — مشکل
 
-اگر `node_modules` و toolchain داخل Image نهایی بمانند: Image بزرگ، سطح حمله بیشتر، deploy کندتر.
+اگر Node و `node_modules` و سورس را داخل Image نهایی بگذارید:
 
-### ایدهٔ multi-stage
+- Image بزرگ می‌شود
+- سطح حمله بیشتر می‌شود
+- چیزهایی که فقط برای build لازم‌اند، در runtime می‌مانند
+
+### راه‌حل: multi-stage build
 
 ```text
-Stage build (node):  npm ci → npm run build → پوشه dist
-Stage run (nginx):   فقط dist را کپی کن → سرو کن
+Stage builder (node):  npm install → npm run build → dist/
+Stage runner (nginx):  فقط dist را کپی کن و سرو کن
 ```
 
-### فایل — `demo/semipro/Dockerfile`
+### فایل دمو — `demo/semipro/Dockerfile` (خلاصه روی صفحه)
 
 ```dockerfile
-# --- build stage ---
-FROM node:22-alpine AS build
+FROM node:22-alpine AS builder
 WORKDIR /app
 COPY package.json ./
 RUN npm install --omit=dev
-COPY . .
+COPY build.js ./
 RUN npm run build
 
-# --- run stage ---
-FROM nginx:1.27-alpine
-COPY --from=build /app/dist /usr/share/nginx/html
+FROM nginx:1.27-alpine AS runner
+COPY --from=builder /app/dist /usr/share/nginx/html
 EXPOSE 80
 ```
 
-> در دمو می‌توانید یک `package.json` خیلی کوچک با اسکریپت `build` که یک `dist/index.html` می‌سازد داشته باشید تا به اپ واقعی وابسته نباشید.
-
 ### بگو
 
-> Image نهایی فقط nginx + فایل‌های استاتیک دارد. Node فقط در مرحلهٔ build بود و دور ریخته شد. این همان الگوی «ساخت یک‌بار، اجرای سبک» است.
+> Stage اول کارخانهٔ build است. Stage دوم ویترین فروشگاه است. مشتری (کاربر نهایی) فقط ویترین را می‌بیند؛ ابزارهای کارخانه داخل Image نهایی نمی‌مانند.
 
-### نکتهٔ cache
+### دمو
 
-ترتیب را رعایت کنید: اول `package.json` / lock، بعد `npm install`، بعد بقیهٔ سورس — تا با تغییر یک خط UI کل dependency دوباره دانلود نشود.
+```bash
+cd docker/demo/semipro
+docker build -t fe-docker-semipro .
+docker run --rm -p 8081:80 fe-docker-semipro
+```
+
+اختیاری اگر وقت بود:
+
+```bash
+docker images fe-docker-simple fe-docker-semipro
+```
+
+### برای فرانت یعنی چه؟
+
+- الگوی رایج SPA/SSR build: `node` برای build، `nginx` (یا مشابه) برای استاتیک
+- در CI همان Dockerfile را می‌زنید؛ «روی سیستم من build شد» کمتر می‌شود
+- `COPY --from=builder` یعنی از stage قبلی آرتیفکت بردار، نه از ماشین host
 
 ---
 
 ## ۵۰–۵۵ دقیقه — Dockerfile پیشرفته (فشرده)
 
-### اسلاید: چک‌لیست کوتاه
+### اسلاید / بولت — سه نکتهٔ طلایی برای فرانت
 
-| موضوع | کار عملی |
-|--------|-----------|
-| `.dockerignore` | `node_modules`, `.git`, `.env` را بیرون بگذارید |
-| کاربر غیر root | در Image نهایی `USER` غیر root (اگر پایه اجازه دهد) |
-| پین کردن نسخه | `nginx:1.27-alpine` نه فقط `nginx:latest` |
-| کم کردن لایهٔ مخفی | secrets را در `RUN` با ARG باقی نگذارید |
-| Health | برای سرویس‌های واقعی بعداً healthcheck بگذارید |
+1. **`.dockerignore`** — مثل `.gitignore` برای context بیلد (`node_modules`, `.git`, …)
+2. **ترتیب لایه برای cache** — اول `package.json` / lockfile، بعد سورس؛ تا تغییر کد همیشه `npm install` را نشکند
+3. **non-root** — فرایند داخل Container با user غیر root؛ پورت غیرprivileged (مثلاً 8080)
 
-### نمونهٔ پیشرفته‌تر — `demo/advanced/`
+### اشاره به دمو — `demo/advanced/`
 
-- `.dockerignore`
-- multi-stage + `build.js`
-- `USER nginx` و listen روی پورت `8080` (بدون root)
-- `HEALTHCHECK`
+روی صفحه نشان دهید (لازم نیست همه خطوط را بخوانید):
+
+- وجود `.dockerignore`
+- `USER nginx` و `EXPOSE 8080`
+- `HEALTHCHECK` اختیاری
 
 ```bash
-cd demo/advanced
-docker build -t frontend-advanced:1 .
-docker run --rm -p 8082:8080 frontend-advanced:1
+cd docker/demo/advanced
+docker build -t fe-docker-advanced .
+docker run --rm -p 8082:8080 fe-docker-advanced
 ```
 
 ### بگو
 
-> پیشرفته یعنی *قابل‌تکرار، کوچک‌تر، امن‌تر* — نه اینکه بیست ابزار قاطی Image کنید.
+> اگر وقت کم دارید همین سه بولت کافی است. جزئیات security production (scanning، distroless، cap drop، …) را به پارکینگ و جلسهٔ بعد/DevOps بسپارید.
 
-اگر وقت تمام شد، همین جدول کافی است و جزئیات را به تکلیف بسپارید.
+### برای فرانت یعنی چه؟
+
+- `.dockerignore` اشتباه = بیلد کند و Image چاق (مثلاً کپی شدن `node_modules` میزبان)
+- cache خوب = در CI وقتی فقط یک کامپوننت عوض شده، `npm install` دوباره آتش نمی‌گیرد
+- non-root = عادت خوب قبل از Kubernetes (آنجا هم securityContext می‌بینید)
 
 ---
 
 ## ۵۵–۷۰ دقیقه — Docker Compose
 
-### چرا Compose؟
+### اسلاید / بولت — چرا Compose؟
 
-یک فرانت به‌تنهایی کافی نیست: اغلب API mock، reverse proxy، یا سرویس دوم دارید. به‌جای چند `docker run` طولانی → یک فایل YAML.
+یک فرانت به‌تنهایی کافی نیست؛ معمولاً:
 
-### مدل ذهنی
+- API mock یا BFF
+- گاهی reverse proxy
+- چند Container که باید با هم شبکه داشته باشند
 
-```text
-compose.yaml
-├── service: web      (frontend / nginx)
-└── service: api      (مثلاً یک upstream ساده)
-     شبکهٔ مشترک پیش‌فرض Compose
-```
+به‌جای چند `docker run` با فلگ‌های طولانی → یک فایل `compose.yaml` (یا `docker-compose.yml`).
 
-### فایل — `demo/compose/compose.yaml`
+### اصطلاحات
+
+| اصطلاح | معنی |
+|--------|------|
+| **Compose file** | تعریف چند Service در YAML |
+| **Service** (در Compose) | یک واحد قابل build/run (معمولاً یک Container از یک Image) |
+| **Project** | مجموع Serviceهایی که با هم `up` می‌شوند |
+
+### فایل دمو — `demo/compose/compose.yaml`
 
 ```yaml
 services:
@@ -266,9 +327,10 @@ services:
       context: .
       dockerfile: Dockerfile.web
     ports:
-      - "8080:80"
+      - "8083:80"
     depends_on:
       - api
+
   api:
     build:
       context: .
@@ -277,120 +339,186 @@ services:
       - "3000"
 ```
 
-nginx در `web` مسیر `/api/` را به سرویس `api` (mock Node روی پورت ۳۰۰۰) پروکسی می‌کند — نام سرویس = hostname داخل شبکهٔ Compose.
+### بگو
 
-### دستورات دمو
+> نام سرویس `api` در شبکهٔ Compose مثل hostname عمل می‌کند. nginx فرانت به `http://api:3000` پروکسی می‌زند؛ شما از مرورگر فقط `localhost:8083` را می‌بینید.
+
+### دمو زنده
 
 ```bash
-cd demo/compose
-docker compose up --build -d
+cd docker/demo/compose
+docker compose up --build
+```
+
+مرورگر: `http://localhost:8083` → دکمهٔ فراخوانی API را بزنید.
+
+در ترمینال دیگر:
+
+```bash
 docker compose ps
-curl -s http://localhost:8080/api/hello
-docker compose logs -f api
-docker compose down
 ```
 
 ### بگو
 
-> Compose برای **توسعه و دموی چندسرویسه روی یک ماشین** عالی است. برای چند Node و self-heal قوی‌تر سراغ ارکستراسیون می‌رویم.
+> Compose برای **توسعه و دموی چندسرویسه روی یک ماشین** عالی است. برای کلاستر production بزرگ، معمولاً به ارکستراسیون (Swarm یا Kubernetes) می‌روید — ولی مدل ذهنی Service و شبکه همین‌جا شکل می‌گیرد.
 
 ### برای فرانت یعنی چه؟
 
-- یک دستور برای بالا آوردن فرانت + BFF/mock
-- نزدیک به تجربهٔ «لوکال مثل سرور» بدون Kubernetes
+- می‌توانید فرانت + mock API را بدون نصب جداگانهٔ Node API روی میزبان بالا بیاورید
+- قرارداد پورت/مسیر (`/api/...`) را مثل محیط واقعی تمرین می‌کنید
+- `depends_on` ترتیب استارت را می‌گوید؛ جایگزین health واقعی کامل نیست (در advanced بعداً)
+
+### توقف
+
+```bash
+docker compose down
+```
 
 ---
 
-## ۷۰–۸۵ دقیقه — Docker Swarm (مقدماتی)
+## ۷۰–۸۵ دقیقه — Docker Swarm (مقدمهٔ ارکستراسیون)
 
-### جایگاه Swarm
+### اسلاید / بولت — مشکل بعدی
+
+Compose روی یک ماشین عالی است. وقتی چند ماشین، چند replica، آپدیت بدون downtime و خودترمیمی می‌خواهید → **Container Orchestration**.
 
 ```text
-یک ماشین / Compose
-        ↓
-چند Node، اعلام وضعیت مطلوب، restart خودکار ≈ Swarm
-        ↓
-اکوسیستم بزرگ‌تر و استاندارد غالب کلاستر ≈ Kubernetes
+Compose  → چند Container روی یک host (عمدتاً)
+Swarm    → ارکستراسیون توکار Docker (Cluster سبک)
+Kubernetes → ارکستراسیون غالب صنعت (دورهٔ بعدی چپتر)
 ```
-
-### مفاهیم یک‌خطی Swarm
-
-| مفهوم | یک خط |
-|--------|--------|
-| **Swarm** | کلاستر ساخته‌شده از یک یا چند Docker Node |
-| **Service** | وضعیت مطلوب: N replica از این Image |
-| **Stack** | مجموعه‌ای از Serviceها (معمولاً از یک compose-file) |
-| **Manager / Worker** | مدیریت کلاستر در برابر اجرای Task |
 
 ### بگو
 
-> Swarm را امروز کامل یاد نمی‌گیریم. هدف این است بفهمید **ارکستراسیون** یعنی اعلام «۳ کپی از این Image می‌خواهم» و موتور آن را نگه می‌دارد — همان ایده‌ای که در Kubernetes با Deployment می‌بینید.
+> Swarm را امروز به‌عنوان **پل مفهومی به Kubernetes** می‌بینیم، نه به‌عنوان انتخاب نهایی production تیم. مهم این است که بفهمید: شما وضعیت مطلوب را اعلام می‌کنید (مثلاً ۲ replica)، ارکستراتور نگهش می‌دارد.
 
-### دمو حداقلی (اگر وقت و محیط اجازه داد)
+### اصطلاحات Swarm در حد جلسه
 
-```bash
-docker swarm init
-cd demo/swarm
-docker stack deploy -c stack.yaml frontend-swarm
-docker service ls
-docker service ps frontend-swarm_web
-docker stack rm frontend-swarm
-```
+| اصطلاح | یک خط |
+|--------|--------|
+| **Swarm** | کلاستر Docker در حالت swarm mode |
+| **Node** | یک ماشین عضو Swarm |
+| **Service** (Swarm) | تعریف مطلوب: کدام Image، چند replica، چه پورت |
+| **Task** | یک Container واقعی که برای Service زمان‌بندی شده |
+| **Stack** | چند Service تعریف‌شده در یک Compose-like file |
 
-### `demo/swarm/stack.yaml` (خلاصه)
+### فایل دمو — `demo/swarm/stack.yaml`
 
 ```yaml
 version: "3.8"
+
 services:
   web:
     image: nginx:1.27-alpine
     ports:
-      - "8080:80"
+      - "8084:80"
     deploy:
       replicas: 2
       restart_policy:
         condition: on-failure
 ```
 
-اگر `swarm init` روی ماشین ارائه‌دهنده دردسر دارد: YAML را روی صفحه بخوانید و بگویید معادل ذهنی‌اش در K8s، Deployment + Service است.
+### دمو (اگر وقت و محیط آماده است)
+
+```bash
+docker swarm init
+cd docker/demo/swarm
+docker stack deploy -c stack.yaml fe-swarm
+docker stack services fe-swarm
+docker service ps fe-swarm_web
+```
+
+مرورگر: `http://localhost:8084`
+
+اگر دمو زنده ریسک دارد: YAML را روی صفحه بخوانید و بگویید خروجی مورد انتظار چیست.
+
+### بگو
+
+> `replicas: 2` را در Swarm ببینید؛ در Kubernetes همین ایده را با Deployment می‌بینید. `Service` در K8s معنای شبکه‌ای دارد؛ اینجا Service بیشتر «واحد دیپلوی» است. اسم‌ها شباهت دارند، یکی نیستند — در دورهٔ K8s دقیق می‌شویم.
 
 ### برای فرانت یعنی چه؟
 
-- `replicas: 2` ≈ دو instance از همان build
-- مسیر بعدی چپتر: Kubernetes با کنترلرهای غنی‌تر و اکوسیستم گسترده‌تر
+- دیپلوی فرانت روی چند instance پشت یک پورت منتشرشده
+- اگر یک Task بمیرد، Swarm سعی می‌کند جایش را پر کند (خودترمیمی مقدماتی)
+- آمادگی ذهنی برای جلسهٔ Kubernetes: Desired State، replica، Image
+
+### پاکسازی
+
+```bash
+docker stack rm fe-swarm
+```
 
 ---
 
 ## ۸۵–۹۰ دقیقه — جمع‌بندی، تکلیف، نظرسنجی
 
-### جمع‌بندی یک‌اسلایدی
+### پنج جمله جمع‌بندی
 
-1. Container ≠ VM؛ Image قالب است، Container اجراست  
-2. Dockerfile: ساده → multi-stage → نکات امنیتی/اندازه  
-3. Compose: چند سرویس روی یک ماشین  
-4. Swarm: ارکستراسیون سبک؛ پل به Kubernetes  
+1. Docker بسته‌بندی و اجرای یکسان اپ را ساده کرد؛ Image قالب است، Container اجراست.
+2. Container با VM فرق دارد: سبک‌تر، kernel مشترک، مدل ایزولهٔ متفاوت.
+3. Dockerfile ساده → multi-stage → نکات cache/امنیت، مسیر رشد طبیعی برای فرانت است.
+4. Compose چند Service را روی یک ماشین با یک فایل بالا می‌آورد.
+5. Swarm مقدمهٔ ارکستراسیون است؛ مسیر بعدی چپتر: Kubernetes.
 
-### تکلیف
+### تکلیف تا بعد از جلسه
 
-جزئیات: [homework.md](./homework.md)
+جزئیات کامل در [homework.md](./homework.md) — خلاصه برای گفتن:
 
-خلاصه برای اعلام شفاهی:
+> از `demo/semipro` یک Image بسازید و اجرا کنید؛ بعد با Compose در `demo/compose` فرانت + API را بالا بیاورید و اسکرین/خروجی بیاورید.  
+> چالش اختیاری: یک تغییر کوچک در advanced (مثلاً متن صفحه) + rebuild با توضیح اینکه کدام لایه cache خورد.
 
-- یک Dockerfile multi-stage برای یک صفحه/SPA خیلی کوچک
-- یک `compose.yaml` با حداقل دو service
-- اسکرین یا متن خروجی `docker compose ps`
+### نظرسنجی (در چت یا فرم)
 
-### نظرسنجی ۳۰ ثانیه‌ای
+1. مفید بودن جلسه از ۱ تا ۵
+2. آمادگی برای شروع Kubernetes؟ بله / شاید / خیر
+3. سخت‌ترین بخش: تاریخچه / VM در برابر Container / Dockerfile / Compose / Swarm
+4. محیط: Docker Desktop / Engine لینوکس / هنوز ندارم
 
-1. آماده‌اید سراغ جلسهٔ Kubernetes بروید؟  
-2. کدام بخش بیشتر وقت می‌خواست: Dockerfile، Compose، یا Swarm؟
+### بستن
 
-### پاکسازی پیشنهادی
+> جلسهٔ بعد در مسیر چپتر: Kubernetes — همان مدل Desired State را با Pod و Deployment می‌بینید. اگر Docker را امروز قورت داده باشید، آن جلسه خیلی نرم‌تر است.
+
+---
+
+## پارکینگ سوالات
+
+- تفاوت دقیق Image layer با cache mount در BuildKit؟
+- Podman / nerdctl به‌جای Docker؟
+- چرا بعضی تیم‌ها مستقیم از Compose به Kubernetes می‌روند و Swarm را رد می‌کنند؟
+- چطور Image فرانت را به registry خصوصی push کنیم؟
+- Distroless و Chainguard برای فرانت؟
+
+---
+
+## ضمیمه — چیت‌شیت Docker این جلسه
 
 ```bash
-docker compose -f demo/compose/compose.yaml down
-docker stack rm frontend-swarm 2>/dev/null || true
-docker rm -f $(docker ps -aq) 2>/dev/null || true
+docker version
+docker build -t <name> .
+docker images
+docker run --rm -p HOST:CONTAINER <image>
+docker ps
+docker logs <container>
+docker stop <container>
+
+docker compose up --build
+docker compose ps
+docker compose down
+
+docker swarm init
+docker stack deploy -c stack.yaml <name>
+docker stack services <name>
+docker service ps <stack>_<service>
+docker stack rm <name>
 ```
 
-فقط محیط دموی خودتان را پاک کنید؛ روی ماشین دیگران دستور جمعی ندهید.
+## ضمیمه — عیب‌یابی سریع دمو
+
+| علامت | احتمال | کار بعدی |
+|--------|---------|----------|
+| `docker: command not found` | Engine/Desktop نصب نیست یا PATH | نصب / باز کردن Docker Desktop |
+| build کند / context بزرگ | نبود `.dockerignore` | فایل ignore را چک کنید |
+| `npm` در build fail | شبکه یا package.json | لاگ build را بخوانید |
+| صفحه سفید روی پورت | mapping پورت اشتباه | `docker ps` و `-p` را چک کنید |
+| Compose: API از فرانت نمی‌آید | نام سرویس / proxy | `default.conf` و نام `api` |
+| Swarm: سرویس 0/2 | swarm init نشده / پورت اشغال | `docker info`, `service ps` |

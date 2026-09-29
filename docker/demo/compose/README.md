@@ -1,11 +1,14 @@
-# دمو Compose — web (nginx) + mock API
+# دمو Compose — frontend + mock API
 
 ```bash
 cd docker/demo/compose
-docker compose up --build -d
-docker compose ps
-curl -s http://localhost:8080/api/hello
-docker compose down
+docker compose up --build
 ```
 
-مرورگر: http://localhost:8080 — لینک `/api/hello` را هم بزنید.
+مرورگر: http://localhost:8083 → دکمه «فراخوانی API» یا لینک `/api/hello`
+
+توقف:
+
+```bash
+docker compose down
+```
