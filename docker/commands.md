@@ -116,5 +116,9 @@ stop / rm / down / stack rm  →  پاکسازی
 
 - اسکریپت ارائه: [session-01.md](./session-01.md)
 - کنداکتور: [00-conductor.md](./00-conductor.md)
+- آناتومی Dockerfile: [dockerfile-anatomy.md](./dockerfile-anatomy.md)
+- آناتومی Compose: [compose-anatomy.md](./compose-anatomy.md)
+- آناتومی Stack: [stack-anatomy.md](./stack-anatomy.md)
+- شبکه: [networking.md](./networking.md)
 - تکلیف: [homework.md](./homework.md)
 - دموها: [demo/](./demo/)

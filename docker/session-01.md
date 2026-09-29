@@ -1,35 +1,42 @@
 # جلسه Docker — از صفر تا قابل‌استفاده (چپتر فرانت)
 
-**مدت:** ۹۰ دقیقه  
-**هدف جلسه:** بفهمیم Docker چرا آمد، تفاوتش با VM چیست، Dockerfile ساده تا نسبتاً حرفه‌ای برای فرانت بنویسیم، چند سرویس را با Compose بالا بیاوریم، و Swarm را به‌عنوان مقدمهٔ ارکستراسیون (پل به Kubernetes) بشناسیم.
+**قالب:** کارگاه آموزشی (یک جلسهٔ بلند یا چند بخش؛ عمق را فدای ساعت نکنید)  
+**راهنمای زمان:** باکس‌های تقریبی در عنوان بخش‌ها **اختیاری**اند — فقط برای برنامه‌ریزی ارائه‌دهنده.  
+**هدف جلسه:** بفهمیم Docker چرا آمد، تفاوتش با VM چیست، Dockerfile ساده تا نسبتاً حرفه‌ای برای فرانت بنویسیم و اجزایش را بشناسیم، شبکهٔ Docker را در حد لازم بفهمیم، چند سرویس را با Compose بالا بیاوریم، و Swarm را به‌عنوان مقدمهٔ ارکستراسیون (پل به Kubernetes) بشناسیم.
 
-**فایل‌های مرتبط:** [کنداکتور](./00-conductor.md) · [تکلیف](./homework.md) · [چیت‌شیت دستورات](./commands.md) · [دموها](./demo/)
+**فایل‌های مرتبط:** [کنداکتور](./00-conductor.md) · [تکلیف](./homework.md) · [چیت‌شیت دستورات](./commands.md) · [دموها](./demo/)  
+**مراجع anatomy:** [Dockerfile](./dockerfile-anatomy.md) · [Compose](./compose-anatomy.md) · [Stack](./stack-anatomy.md) · [Networking](./networking.md)
+
+**پورت‌های دمو:** simple `8080` · semipro `8081` · advanced `8082` · compose `8083` · swarm `8084`
 
 ---
 
 ## راهنمای ارائه‌دهنده
 
 - این فایل اسکریپت ارائه است: بخش‌های **بگو** را تقریباً همان‌طور بگویید؛ بلوک‌های کد را روی صفحه نشان دهید.
-- اگر وقت کم آمد (اولویت حذف از [کنداکتور](./00-conductor.md)):
-  1. بخش پیشرفته Dockerfile → ۳ دقیقه بولت
+- جداول anatomy را در جلسه **progressive** باز کنید: اول دستورات دمو، بعد لینک به فایل مرجع برای مرور بعد از جلسه.
+- اگر اسلات فشرده دارید (اولویت حذف از [کنداکتور](./00-conductor.md)):
+  1. بخش پیشرفته Dockerfile → بولت کوتاه + لینک anatomy
   2. دمو Swarm زنده نکنید؛ YAML را روی صفحه بخوانید
-  3. تاریخچه را به ۳ دقیقه فشرده کنید
-  4. جیب «دستورات پرکاربرد» → فقط جدول را نشان دهید و رد شوید (لیست کامل در [commands.md](./commands.md))
-- اگر وقت زیاد آمد: یک `COPY` اشتباه را با `docker history` debug کنید، یا سرویس دوم به Compose اضافه کنید.
+  3. تاریخچه را فشرده کنید
+  4. جیب «دستورات پرکاربرد» → فقط جدول را نشان دهید (لیست کامل در [commands.md](./commands.md))
+- اگر وقت / بخش اضافه دارید: `docker history`، `compose exec` برای تست DNS، یا سرویس دوم به Compose.
 
 ---
 
-## ۰–۵ دقیقه — خوش‌آمد و هدف
+## بلوک ۱ — خوش‌آمد و هدف
+
+*راهنمای زمان اختیاری: ~۵ دقیقه*
 
 ### اسلاید / بولت
 
 - موضوع: Docker برای چپتر فرانت (قبل از Kubernetes)
-- امروز یاد نمی‌گیریم «کل Docker ecosystem» را؛ یاد می‌گیریم **مدل ذهنی درست** + **اولین Image فرانت** + **Compose** + **نگاه به Swarm**
-- خروجی جلسه: بتوانید بگویید Image ≠ Container، یک Dockerfile multi-stage بخوانید، و دو سرویس را با Compose بالا بیاورید
+- امروز یاد نمی‌گیریم «کل Docker ecosystem» را؛ یاد می‌گیریم **مدل ذهنی درست** + **اولین Image فرانت** + **اجزای فایل‌ها** + **Compose و شبکه** + **نگاه به Swarm**
+- خروجی: بتوانید بگویید Image ≠ Container، یک Dockerfile multi-stage بخوانید، `ports` را از `expose` سوا کنید، و دو سرویس را با Compose بالا بیاورید
 
 ### بگو
 
-> هدف این جلسه این نیست که DevOps شوید. هدف این است که وقتی می‌گوییم «فرانت داخل Container رفت»، دقیقاً بدانید Image چیست، Container چیست، Dockerfile چه کار می‌کند، و چرا بعداً سراغ Kubernetes می‌رویم.
+> هدف این کارگاه این نیست که DevOps شوید. هدف این است که وقتی می‌گوییم «فرانت داخل Container رفت»، دقیقاً بدانید Image چیست، Container چیست، Dockerfile چه کار می‌کند، سرویس‌ها چطور همدیگر را روی شبکه پیدا می‌کنند، و چرا بعداً سراغ Kubernetes می‌رویم.
 
 ### چک سریع اتاق
 
@@ -52,7 +59,9 @@ docker compose version
 
 ---
 
-## ۵–۱۵ دقیقه — تاریخچهٔ کوتاه
+## بلوک ۲ — تاریخچهٔ کوتاه
+
+*راهنمای زمان اختیاری: ~۱۰ دقیقه*
 
 ### اسلاید / بولت — خط زمان ذهنی
 
@@ -83,7 +92,9 @@ docker compose version
 
 ---
 
-## ۱۵–۳۰ دقیقه — Docker در برابر سایر Virtualizationها
+## بلوک ۳ — Docker در برابر سایر Virtualizationها
+
+*راهنمای زمان اختیاری: ~۱۵ دقیقه*
 
 ### اسلاید: VM در برابر Container
 
@@ -137,7 +148,7 @@ Container:
 - محیط staging و production از یک Dockerfile (یا نزدیک به آن) می‌آیند
 - وقتی Backend می‌گوید «پورت داخل Container»، یعنی پورت اپ داخل آن باکس — نه لزوماً پورت لپ‌تاپ شما
 
-### مینی‌چک فهم (۱ دقیقه)
+### مینی‌چک فهم
 
 از اتاق بپرسید:
 
@@ -148,13 +159,27 @@ Container:
 
 ---
 
-## ۳۰–۴۰ دقیقه — Dockerfile ساده + دمو
+## بلوک ۴ — Dockerfile ساده + دمو + آناتومی پایه
+
+*راهنمای زمان اختیاری: ~۱۵–۲۰ دقیقه*
 
 ### اسلاید / بولت
 
 - Dockerfile = دستورات ساخت Image از بالا به پایین
 - هر دستور معمولاً یک **لایه (layer)** می‌سازد
 - برای فرانت سطح صفر: فایل استاتیک + Image پایهٔ `nginx`
+
+### جدول سریع — دستوراتی که همین الان می‌بینید
+
+| دستور | معنی یک خط | برای فرانت |
+|--------|------------|------------|
+| `FROM` | Image پایه | `nginx:…` یا بعداً `node:…` |
+| `COPY` | فایل host/context → داخل Image | HTML / `dist` / سورس |
+| `EXPOSE` | مستندسازی پورت داخل Container | **پورت لپ‌تاپ را باز نمی‌کند** |
+| `WORKDIR` | پوشهٔ کاری | مثل `cd` دائمی (در semipro می‌بینید) |
+| `RUN` | فرمان هنگام **build** | `npm install` / `npm run build` |
+
+مرجع کامل دستورات (`ENV`, `USER`, `CMD`, `ARG`, `HEALTHCHECK`, …): [dockerfile-anatomy.md](./dockerfile-anatomy.md)
 
 ### فایل دمو — `demo/simple/Dockerfile`
 
@@ -205,9 +230,9 @@ docker images
 docker stop <container_id>
 ```
 
-### جیب دستورات پرکاربرد (۲–۳ دقیقه)
+### جیب دستورات پرکاربرد
 
-> اگر وقت کم است: همین جدول را روی صفحه بگذارید، یک «بگو» بگویید، و بروید سراغ multi-stage. لیست کامل + Compose/Swarm در [commands.md](./commands.md) است.
+> اگر اسلات فشرده است: همین جدول را روی صفحه بگذارید، یک «بگو» بگویید، و بروید سراغ multi-stage. لیست کامل + Compose/Swarm در [commands.md](./commands.md) است.
 
 | دستور | چه می‌کند | مثال کوتاه |
 |--------|-----------|------------|
@@ -234,7 +259,9 @@ docker stop <container_id>
 
 ---
 
-## ۴۰–۵۰ دقیقه — Dockerfile نیمه‌حرفه‌ای (multi-stage)
+## بلوک ۵ — Dockerfile نیمه‌حرفه‌ای (multi-stage)
+
+*راهنمای زمان اختیاری: ~۱۵ دقیقه*
 
 ### اسلاید / بولت — مشکل
 
@@ -247,28 +274,37 @@ docker stop <container_id>
 ### راه‌حل: multi-stage build
 
 ```text
-Stage builder (node):  npm install → npm run build → dist/
-Stage runner (nginx):  فقط dist را کپی کن و سرو کن
+Stage build (node):  npm install → npm run build → dist/
+Stage final (nginx):  فقط dist را کپی کن و سرو کن
 ```
+
+### آناتومی دستورات جدید این بخش
+
+| دستور / الگو | معنی | در دمو semipro |
+|---------------|------|----------------|
+| `FROM … AS build` | stage نام‌دار | کارخانهٔ Node |
+| `WORKDIR /app` | پوشهٔ کاری | همهٔ `COPY`/`RUN` نسبی به `/app` |
+| `RUN npm install` / `RUN npm run build` | اجرا هنگام build | لایهٔ cache روی `package.json` |
+| `COPY --from=build …` | آرتیفکت از stage دیگر | فقط `dist` به nginx |
 
 ### فایل دمو — `demo/semipro/Dockerfile` (خلاصه روی صفحه)
 
 ```dockerfile
-FROM node:22-alpine AS builder
+FROM node:22-alpine AS build
 WORKDIR /app
 COPY package.json ./
 RUN npm install --omit=dev
 COPY build.js ./
 RUN npm run build
 
-FROM nginx:1.27-alpine AS runner
-COPY --from=builder /app/dist /usr/share/nginx/html
+FROM nginx:1.27-alpine
+COPY --from=build /app/dist /usr/share/nginx/html
 EXPOSE 80
 ```
 
 ### بگو
 
-> Stage اول کارخانهٔ build است. Stage دوم ویترین فروشگاه است. مشتری (کاربر نهایی) فقط ویترین را می‌بیند؛ ابزارهای کارخانه داخل Image نهایی نمی‌مانند.
+> Stage اول کارخانهٔ build است. Stage دوم ویترین فروشگاه است. مشتری (کاربر نهایی) فقط ویترین را می‌بیند؛ ابزارهای کارخانه داخل Image نهایی نمی‌مانند. اسم stage اینجاست `build`؛ مهم این است که `COPY --from=` همان اسم را بگوید.
 
 ### دمو
 
@@ -288,17 +324,32 @@ docker images fe-docker-simple fe-docker-semipro
 
 - الگوی رایج SPA/SSR build: `node` برای build، `nginx` (یا مشابه) برای استاتیک
 - در CI همان Dockerfile را می‌زنید؛ «روی سیستم من build شد» کمتر می‌شود
-- `COPY --from=builder` یعنی از stage قبلی آرتیفکت بردار، نه از ماشین host
+- `COPY --from=build` یعنی از stage قبلی آرتیفکت بردار، نه از ماشین host
+
+جزئیات بیشتر: [dockerfile-anatomy.md](./dockerfile-anatomy.md)
 
 ---
 
-## ۵۰–۵۵ دقیقه — Dockerfile پیشرفته (فشرده)
+## بلوک ۶ — Dockerfile پیشرفته
+
+*راهنمای زمان اختیاری: ~۱۰–۱۵ دقیقه (قابل گسترش)*
 
 ### اسلاید / بولت — سه نکتهٔ طلایی برای فرانت
 
 1. **`.dockerignore`** — مثل `.gitignore` برای context بیلد (`node_modules`, `.git`, …)
 2. **ترتیب لایه برای cache** — اول `package.json` / lockfile، بعد سورس؛ تا تغییر کد همیشه `npm install` را نشکند
 3. **non-root** — فرایند داخل Container با user غیر root؛ پورت غیرprivileged (مثلاً 8080)
+
+### آناتومی دستورات سطح بالاتر
+
+| دستور | معنی | در دمو advanced / api |
+|--------|------|------------------------|
+| `USER` | کاربر فرایند | `USER nginx` / در API: `USER node` |
+| `HEALTHCHECK` | چک دوره‌ای سلامت | `wget` روی `127.0.0.1:8080` |
+| `ENV` | متغیر محیطی runtime | در `Dockerfile.api`: `ENV PORT=3000` |
+| `CMD` | فرمان شروع Container | `CMD ["node", "mock-api.js"]` |
+| `ARG` | فقط زمان build | در دموها نیست؛ در anatomy توضیح شده |
+| `ENTRYPOINT` | نقطهٔ ورود ثابت‌تر | معمولاً از Image پایه می‌آید |
 
 ### اشاره به دمو — `demo/advanced/`
 
@@ -316,7 +367,7 @@ docker run --rm -p 8082:8080 fe-docker-advanced
 
 ### بگو
 
-> اگر وقت کم دارید همین سه بولت کافی است. جزئیات security production (scanning، distroless، cap drop، …) را به پارکینگ و جلسهٔ بعد/DevOps بسپارید.
+> این سه بولت را خوب بگیرید. جدول کامل دستورات — از جمله `ARG` و تفاوتش با `ENV` — در فایل anatomy مانده تا بعد از جلسه مرور کنید. جزئیات security production (scanning، distroless، cap drop، …) را به پارکینگ و DevOps بسپارید.
 
 ### برای فرانت یعنی چه؟
 
@@ -326,7 +377,48 @@ docker run --rm -p 8082:8080 fe-docker-advanced
 
 ---
 
-## ۵۵–۷۰ دقیقه — Docker Compose
+## بلوک ۷ — شبکهٔ Docker (کوتاه اما واقعی)
+
+*راهنمای زمان اختیاری: ~۸–۱۲ دقیقه — درست قبل از Compose یا داخل همان بخش*
+
+### اسلاید / بولت
+
+- Containerها به‌تنهایی «روی لپ‌تاپ شما» نیستند؛ روی **شبکهٔ مجازی** Docker حرف می‌زنند
+- دو سؤال جدا: (۱) مرورگر من چطور برسد؟ (۲) دو Container چطور همدیگر را پیدا کنند؟
+
+### جدول انواع رایج
+
+| نوع | حس کوتاه | کی می‌بینید |
+|-----|----------|-------------|
+| **default bridge** | `docker run` تکی بدون تنظیم خاص | دموی simple |
+| **user-defined bridge** | DNS نام‌دار؛ الگوی درست چندسرویسه | **Compose خودکار می‌سازد** |
+| **host** / **none** | میزبان مشترک / بدون شبکه | فقط اشاره؛ دمو لازم نیست |
+| **overlay** | چند Node (Swarm) | اشاره در بلوک Swarm |
+
+### `ports` در برابر `expose` در برابر `EXPOSE`
+
+| مکانیزم | اثر برای فرانت |
+|---------|----------------|
+| `-p` / `ports:` | پورت را روی **لپ‌تاپ** باز می‌کند → مرورگر |
+| `expose:` در Compose | پورت روی **شبکهٔ داخلی**؛ از بیرون لازم نیست |
+| `EXPOSE` در Dockerfile | مستندسازی؛ publish نمی‌کند |
+
+### بگو
+
+> وقتی Compose را بالا می‌آوریم، سرویس `api` روی شبکهٔ پروژه hostname می‌شود. nginx فرانت به `http://api:3000` می‌زند — نه `localhost:3000`. `localhost` داخل Container یعنی همان جعبه، نه همسایه و نه لپ‌تاپ شما.
+
+### برای فرانت یعنی چه؟
+
+- دکمهٔ «فراخوانی API» در دمو از دید مرورگر فقط به `localhost:8083` می‌رود؛ پروکسی داخل `web` بقیه را روی شبکهٔ Docker تمام می‌کند
+- باگ رایج: در تنظیمات فرانت/nginx نوشتن `localhost` به‌جای نام سرویس
+
+مرجع کامل‌تر + عیب‌یابی: [networking.md](./networking.md)
+
+---
+
+## بلوک ۸ — Docker Compose + آناتومی فایل
+
+*راهنمای زمان اختیاری: ~۲۰–۳۰ دقیقه*
 
 ### اسلاید / بولت — چرا Compose؟
 
@@ -345,6 +437,22 @@ docker run --rm -p 8082:8080 fe-docker-advanced
 | **Compose file** | تعریف چند Service در YAML |
 | **Service** (در Compose) | یک واحد قابل build/run (معمولاً یک Container از یک Image) |
 | **Project** | مجموع Serviceهایی که با هم `up` می‌شوند |
+| **Project network** | user-defined bridge مشترک؛ نام Service = DNS |
+
+### آناتومی کلیدهای دمو (و اطرافش)
+
+| کلید | معنی | در `demo/compose/compose.yaml` |
+|------|------|--------------------------------|
+| `services` | نقشهٔ سرویس‌ها | `web`, `api` |
+| `build.context` | پوشهٔ context بیلد | `.` |
+| `build.dockerfile` | کدام Dockerfile | `Dockerfile.web` / `Dockerfile.api` |
+| `ports` | publish به میزبان | `"8083:80"` فقط روی `web` |
+| `expose` | پورت داخلی شبکه | `"3000"` روی `api` |
+| `depends_on` | ترتیب استارت | `web` منتظر استارت `api` |
+| `image` | Image آماده (بدون build) | در این دمو نیست؛ در Swarm هست |
+| `environment` / `volumes` / `networks` | env، دیسک، شبکهٔ نام‌دار | در anatomy؛ دمو مینیمال است |
+
+جدول کامل‌تر: [compose-anatomy.md](./compose-anatomy.md)
 
 ### فایل دمو — `demo/compose/compose.yaml`
 
@@ -367,9 +475,21 @@ services:
       - "3000"
 ```
 
+### اشارهٔ سریع به `Dockerfile.api` (ENV / USER / CMD)
+
+```dockerfile
+FROM node:22-alpine
+WORKDIR /app
+COPY mock-api.js ./
+ENV PORT=3000
+EXPOSE 3000
+USER node
+CMD ["node", "mock-api.js"]
+```
+
 ### بگو
 
-> نام سرویس `api` در شبکهٔ Compose مثل hostname عمل می‌کند. nginx فرانت به `http://api:3000` پروکسی می‌زند؛ شما از مرورگر فقط `localhost:8083` را می‌بینید.
+> نام سرویس `api` در شبکهٔ Compose مثل hostname عمل می‌کند. nginx فرانت به `http://api:3000` پروکسی می‌زند؛ شما از مرورگر فقط `localhost:8083` را می‌بینید. `depends_on` می‌گوید کی زودتر روشن شود؛ جایگزین health کامل نیست.
 
 ### دمو زنده
 
@@ -386,6 +506,13 @@ docker compose up --build
 docker compose ps
 ```
 
+اختیاری اگر وقت بود (تمرین DNS):
+
+```bash
+docker compose exec web sh
+# داخل container: wget -qO- http://api:3000/   (یا ابزار موجود)
+```
+
 ### بگو
 
 > Compose برای **توسعه و دموی چندسرویسه روی یک ماشین** عالی است. برای کلاستر production بزرگ، معمولاً به ارکستراسیون (Swarm یا Kubernetes) می‌روید — ولی مدل ذهنی Service و شبکه همین‌جا شکل می‌گیرد.
@@ -394,7 +521,7 @@ docker compose ps
 
 - می‌توانید فرانت + mock API را بدون نصب جداگانهٔ Node API روی میزبان بالا بیاورید
 - قرارداد پورت/مسیر (`/api/...`) را مثل محیط واقعی تمرین می‌کنید
-- `depends_on` ترتیب استارت را می‌گوید؛ جایگزین health واقعی کامل نیست (در advanced بعداً)
+- `ports` فقط روی `web` یعنی API از اینترنت لپ‌تاپ شما مستقیم باز نیست — الگوی خوب برای BFF/mock پشت فرانت
 
 ### توقف
 
@@ -406,7 +533,9 @@ docker compose down
 
 ---
 
-## ۷۰–۸۵ دقیقه — Docker Swarm (مقدمهٔ ارکستراسیون)
+## بلوک ۹ — Docker Swarm + آناتومی stack
+
+*راهنمای زمان اختیاری: ~۱۵–۲۵ دقیقه*
 
 ### اسلاید / بولت — مشکل بعدی
 
@@ -432,6 +561,18 @@ Kubernetes → ارکستراسیون غالب صنعت (دورهٔ بعدی چ�
 | **Task** | یک Container واقعی که برای Service زمان‌بندی شده |
 | **Stack** | چند Service تعریف‌شده در یک Compose-like file |
 
+### آناتومی `stack.yaml` — چه چیزی با Compose فرق دارد؟
+
+| کلید / موضوع | معنی | در دمو |
+|--------------|------|--------|
+| `image:` (نه `build:`) | Image از قبل آماده | `nginx:1.27-alpine` |
+| `ports` | publish | `"8084:80"` |
+| `deploy.replicas` | تعداد نسخهٔ مطلوب | `2` |
+| `deploy.restart_policy` | کی ری‌استارت شود | `on-failure` |
+| `deploy.update_config` / `placement` / … | rolling update، جای‌گیری Node | در anatomy؛ دمو مینیمال نیست |
+
+مرجع: [stack-anatomy.md](./stack-anatomy.md)
+
 ### فایل دمو — `demo/swarm/stack.yaml`
 
 ```yaml
@@ -448,7 +589,7 @@ services:
         condition: on-failure
 ```
 
-### دمو (اگر وقت و محیط آماده است)
+### دمو (اگر محیط آماده است)
 
 ```bash
 docker swarm init
@@ -464,7 +605,7 @@ docker service ps fe-swarm_web
 
 ### بگو
 
-> `replicas: 2` را در Swarm ببینید؛ در Kubernetes همین ایده را با Deployment می‌بینید. `Service` در K8s معنای شبکه‌ای دارد؛ اینجا Service بیشتر «واحد دیپلوی» است. اسم‌ها شباهت دارند، یکی نیستند — در دورهٔ K8s دقیق می‌شویم.
+> `replicas: 2` را در Swarm ببینید؛ در Kubernetes همین ایده را با Deployment می‌بینید. `Service` در K8s معنای شبکه‌ای دارد؛ اینجا Service بیشتر «واحد دیپلوی» است. اسم‌ها شباهت دارند، یکی نیستند — در دورهٔ K8s دقیق می‌شویم. روی چند Node، Swarm از overlay network حرف می‌زند؛ امروز عمیق نمی‌شویم.
 
 ### برای فرانت یعنی چه؟
 
@@ -480,15 +621,18 @@ docker stack rm fe-swarm
 
 ---
 
-## ۸۵–۹۰ دقیقه — جمع‌بندی، تکلیف، نظرسنجی
+## بلوک ۱۰ — جمع‌بندی، تکلیف، نظرسنجی
 
-### پنج جمله جمع‌بندی
+*راهنمای زمان اختیاری: ~۵–۱۰ دقیقه*
+
+### شش جمله جمع‌بندی
 
 1. Docker بسته‌بندی و اجرای یکسان اپ را ساده کرد؛ Image قالب است، Container اجراست.
 2. Container با VM فرق دارد: سبک‌تر، kernel مشترک، مدل ایزولهٔ متفاوت.
-3. Dockerfile ساده → multi-stage → نکات cache/امنیت، مسیر رشد طبیعی برای فرانت است.
-4. Compose چند Service را روی یک ماشین با یک فایل بالا می‌آورد.
-5. Swarm مقدمهٔ ارکستراسیون است؛ مسیر بعدی چپتر: Kubernetes.
+3. Dockerfile ساده → multi-stage → نکات cache/امنیت؛ دستوراتش (`FROM`, `COPY`, `RUN`, `USER`, …) خواندنی‌اند.
+4. روی شبکه: `ports` برای مرورگر شماست؛ نام Service در Compose برای حرف زدن Containerها با هم.
+5. Compose چند Service را روی یک ماشین با یک فایل بالا می‌آورد.
+6. Swarm مقدمهٔ ارکستراسیون است؛ مسیر بعدی چپتر: Kubernetes.
 
 ### تکلیف تا بعد از جلسه
 
@@ -496,13 +640,13 @@ docker stack rm fe-swarm
 
 > از `demo/semipro` یک Image بسازید و اجرا کنید؛ بعد با Compose در `demo/compose` فرانت + API را بالا بیاورید و اسکرین/خروجی بیاورید.  
 > چالش اختیاری: یک تغییر کوچک در advanced (مثلاً متن صفحه) + rebuild با توضیح اینکه کدام لایه cache خورد.  
-> چیت‌شیت دستورات: [commands.md](./commands.md)
+> چیت‌شیت دستورات: [commands.md](./commands.md) · anatomyها برای مرور اجزای فایل‌ها
 
 ### نظرسنجی (در چت یا فرم)
 
 1. مفید بودن جلسه از ۱ تا ۵
 2. آمادگی برای شروع Kubernetes؟ بله / شاید / خیر
-3. سخت‌ترین بخش: تاریخچه / VM در برابر Container / Dockerfile / Compose / Swarm
+3. سخت‌ترین بخش: تاریخچه / VM در برابر Container / Dockerfile / شبکه / Compose / Swarm
 4. محیط: Docker Desktop / Engine لینوکس / هنوز ندارم
 
 ### بستن
@@ -518,6 +662,7 @@ docker stack rm fe-swarm
 - چرا بعضی تیم‌ها مستقیم از Compose به Kubernetes می‌روند و Swarm را رد می‌کنند؟
 - چطور Image فرانت را به registry خصوصی push کنیم؟
 - Distroless و Chainguard برای فرانت؟
+- جزئیات overlay network در Swarm؟
 
 ---
 
@@ -563,5 +708,14 @@ docker stack rm <name>
 | build کند / context بزرگ | نبود `.dockerignore` | فایل ignore را چک کنید |
 | `npm` در build fail | شبکه یا package.json | لاگ build را بخوانید |
 | صفحه سفید روی پورت | mapping پورت اشتباه | `docker ps` و `-p` را چک کنید |
-| Compose: API از فرانت نمی‌آید | نام سرویس / proxy | `default.conf` و نام `api` |
+| Compose: API از فرانت نمی‌آید | نام سرویس / proxy | `default.conf` و نام `api` — نه `localhost` |
 | Swarm: سرویس 0/2 | swarm init نشده / پورت اشغال | `docker info`, `service ps` |
+
+## ضمیمه — لینک مراجع anatomy
+
+| موضوع | فایل |
+|--------|------|
+| Dockerfile | [dockerfile-anatomy.md](./dockerfile-anatomy.md) |
+| Compose | [compose-anatomy.md](./compose-anatomy.md) |
+| Stack / Swarm | [stack-anatomy.md](./stack-anatomy.md) |
+| Networking | [networking.md](./networking.md) |

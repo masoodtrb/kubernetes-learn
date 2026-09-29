@@ -4,7 +4,7 @@
 
 **قانون کلی:** این تکلیف باید در **کمتر از ۹۰ دقیقه** قابل انجام باشد.
 
-**فایل‌های کمکی:** [session-01.md](./session-01.md) · [commands.md](./commands.md) (چیت‌شیت دستورات) · [demo/](./demo/)
+**فایل‌های کمکی:** [session-01.md](./session-01.md) · [commands.md](./commands.md) (چیت‌شیت دستورات) · [dockerfile-anatomy.md](./dockerfile-anatomy.md) · [compose-anatomy.md](./compose-anatomy.md) · [networking.md](./networking.md) · [demo/](./demo/)
 
 ---
 
