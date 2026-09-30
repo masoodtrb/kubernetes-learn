@@ -1,0 +1,912 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>داکر برای فرانت‌اند — از Image تا ارکستراسیون</title>
+<style>
+@font-face {
+  font-family: Vazirmatn;
+  src: url("fonts/Vazirmatn-var.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --bg: #07111f;
+  --ink: #f4f7fb;
+  --muted: #a9bbcf;
+  --cyan: #6ee7d8;
+  --orange: #ffb86b;
+  --line: #2c455f;
+  --shadow: 0 24px 60px #02081199;
+  --font: Vazirmatn, Tahoma, "Segoe UI", sans-serif;
+  --mono: ui-monospace, "SFMono-Regular", "SF Mono", Menlo, Consolas, monospace;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font);
+  font-feature-settings: "ss01";
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+body { overflow: hidden; }
+
+::selection { background: #56dfd055; }
+
+.deck {
+  height: 100%;
+  display: grid;
+  place-items: center;
+  padding: 24px 4vw 68px;
+  background:
+    radial-gradient(ellipse at 8% 0%, #14314a 0, transparent 42%),
+    radial-gradient(ellipse at 100% 100%, #152538 0, transparent 36%),
+    var(--bg);
+}
+
+.slide {
+  display: none;
+  width: min(1120px, 94vw);
+  height: min(680px, calc(100dvh - 96px));
+  min-height: 520px;
+  position: relative;
+  overflow: hidden;
+  padding-block: 32px 58px;
+  padding-inline: clamp(28px, 4vw, 56px);
+  border: 1px solid #274158;
+  border-radius: 22px;
+  background: linear-gradient(160deg, #101e30 0%, #0b1726 70%, #102338 100%);
+  box-shadow: var(--shadow);
+}
+
+.slide.active {
+  display: flex;
+  flex-direction: column;
+  animation: enter .28s ease-out;
+}
+
+@keyframes enter {
+  from { opacity: .25; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+
+.slide::after {
+  content: "";
+  position: absolute;
+  inset-block-end: -150px;
+  inset-inline-start: -90px;
+  width: 280px;
+  height: 280px;
+  border: 1px solid #56dfd014;
+  border-radius: 50%;
+  box-shadow: 0 0 0 28px #56dfd008, 0 0 0 56px #56dfd005;
+  pointer-events: none;
+}
+
+.eyebrow {
+  color: var(--cyan);
+  font-size: 14px;
+  font-weight: 600;
+  margin-block-end: 12px;
+}
+
+.title {
+  font-size: clamp(30px, 3.6vw, 48px);
+  line-height: 1.4;
+  margin: 0 0 16px;
+  font-weight: 700;
+  max-width: 18em;
+  text-wrap: balance;
+}
+
+.subtitle {
+  font-size: clamp(17px, 1.7vw, 21px);
+  line-height: 1.9;
+  color: var(--muted);
+  max-width: 38em;
+  margin: 0;
+}
+
+.accent { color: var(--cyan); }
+.orange { color: var(--orange); }
+
+.content {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 0;
+}
+
+.grid { display: grid; gap: 14px; }
+.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.mt { margin-block-start: 14px; }
+.mt-lg { margin-block-start: 18px; }
+
+.card {
+  background: linear-gradient(160deg, #15293e, #101f31);
+  border: 1px solid var(--line);
+  padding: 16px 18px;
+  border-radius: 16px;
+  min-width: 0;
+}
+
+.card h3 {
+  font-size: 18px;
+  line-height: 1.5;
+  margin: 0 0 8px;
+  font-weight: 700;
+  color: var(--cyan);
+}
+
+.card p, .card li {
+  font-size: 15.5px;
+  line-height: 1.85;
+  color: #d5e2ee;
+  margin: 0;
+}
+
+.card ul {
+  margin: 8px 0 0;
+  padding-inline-start: 1.15rem;
+}
+
+.card li + li { margin-block-start: 4px; }
+.card .num + h3 { margin-block-start: 12px; }
+
+.big {
+  font-size: clamp(21px, 2.4vw, 30px);
+  line-height: 1.75;
+  font-weight: 650;
+  margin: 0;
+}
+
+.small {
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.85;
+  margin: 8px 0 0;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 12px;
+  border: 1px solid #3b5b75;
+  border-radius: 999px;
+  color: #d9e8f4;
+  background: #14273a;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.pills {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-block-start: 16px;
+}
+
+.en, bdi, .code, .arrow {
+  font-feature-settings: normal;
+}
+
+.en, bdi {
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+
+.code {
+  direction: ltr;
+  text-align: start;
+  unicode-bidi: isolate;
+  white-space: pre-wrap;
+  background: #07111b;
+  border: 1px solid #28415a;
+  border-inline-start: 3px solid #3d8f86;
+  border-radius: 12px;
+  padding: 14px 16px;
+  color: #d7eee4;
+  font-family: var(--mono);
+  font-size: 13.5px;
+  line-height: 1.7;
+  font-feature-settings: normal;
+}
+
+.flow, .path {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.flow {
+  justify-content: center;
+  margin-block: 18px;
+}
+
+.path { margin: 0 0 4px; }
+.step { display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; }
+
+.flow .node {
+  background: #162a40;
+  border: 1px solid #39566d;
+  border-radius: 14px;
+  padding: 12px 16px;
+  font-weight: 650;
+  font-size: 16px;
+  line-height: 1.55;
+  text-align: center;
+}
+
+.arrow {
+  direction: ltr;
+  unicode-bidi: isolate;
+  color: var(--orange);
+  font-size: 22px;
+  line-height: 1;
+  flex: none;
+}
+
+.highlight {
+  border-inline-start: 3px solid var(--orange);
+  padding-block: 10px;
+  padding-inline: 14px 16px;
+  background: #ffb86b12;
+  border-radius: 8px;
+  color: #ffe3c2;
+  font-size: 16px;
+  line-height: 1.85;
+  margin-block-start: 14px;
+}
+
+.compare {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #07111f;
+  background: var(--cyan);
+  padding: 4px 10px;
+  border-radius: 99px;
+  margin-block-end: 12px;
+  line-height: 1.5;
+}
+
+.label.orange-label { background: var(--orange); }
+.label .arrow { font-size: 13px; color: inherit; }
+
+.list { display: grid; gap: 10px; }
+
+.item {
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+  font-size: 16px;
+  line-height: 1.75;
+  color: #d9e4ef;
+}
+
+.num {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  background: #19364a;
+  color: var(--cyan);
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.footer {
+  position: absolute;
+  inset-block-end: 16px;
+  inset-inline: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  color: #8ca3b9;
+  font-size: 13px;
+  line-height: 1.6;
+  z-index: 2;
+}
+
+.controls {
+  position: fixed;
+  inset-block-end: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  z-index: 10;
+  padding: 6px 10px;
+  border: 1px solid #29415a;
+  border-radius: 999px;
+  background: #0d1b2be6;
+  backdrop-filter: blur(10px);
+}
+
+.controls button {
+  border: 0;
+  color: #eaf5fb;
+  background: #19334a;
+  border-radius: 50%;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+
+.controls button:hover { background: #24516a; }
+
+.controls button:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 2px;
+}
+
+.controls button i {
+  display: block;
+  width: 8px;
+  height: 8px;
+  border-top: 2px solid currentColor;
+}
+
+/* قبلی سمت راست است و به عقب (راست) اشاره می‌کند؛ بعدی سمت چپ و رو به جلو */
+#prev i {
+  border-right: 2px solid currentColor;
+  transform: rotate(45deg);
+}
+
+#next i {
+  border-left: 2px solid currentColor;
+  transform: rotate(-45deg);
+}
+
+.count {
+  min-width: 64px;
+  text-align: center;
+  font-size: 13px;
+  color: #b7c8d8;
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+
+.bar {
+  position: fixed;
+  inset-block-end: 0;
+  inset-inline-start: 0;
+  height: 3px;
+  background: var(--cyan);
+  width: 0;
+  transition: width .25s;
+  z-index: 20;
+}
+
+.cover .title {
+  font-size: clamp(40px, 5.4vw, 64px);
+  line-height: 1.3;
+  max-width: 16em;
+}
+
+.cover .content { justify-content: center; }
+
+.cover::before {
+  content: "DOCKER";
+  position: absolute;
+  inset-inline-end: -20px;
+  inset-block-end: -120px;
+  color: #ffffff06;
+  font-family: Vazirmatn, sans-serif;
+  font-size: clamp(100px, 16vw, 190px);
+  font-weight: 900;
+  letter-spacing: -0.06em;
+  line-height: 1;
+  direction: ltr;
+  unicode-bidi: isolate;
+  pointer-events: none;
+}
+
+.cover .pills { margin-block-start: 28px; }
+.endnote { margin-block-start: 16px; color: var(--muted); font-size: 15px; }
+
+.slide.long .code { padding-block: 10px; line-height: 1.55; }
+.slide.long .highlight { margin-block-start: 10px; }
+.slide.long .title { margin-block-end: 10px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .slide.active { animation: none; }
+  .bar { transition: none; }
+}
+
+@media (max-width: 760px) {
+  .deck { padding: 10px 10px 64px; }
+  .slide {
+    width: 96vw;
+    height: calc(100dvh - 84px);
+    min-height: 0;
+    padding: 22px 18px 52px;
+    border-radius: 16px;
+  }
+  .two, .three, .compare { grid-template-columns: 1fr 1fr; }
+  .card { padding: 12px 14px; }
+  .card h3 { font-size: 16px; }
+  .card p, .card li, .item { font-size: 14px; }
+  .code { font-size: 12px; padding: 12px; }
+  .footer { inset-inline: 16px; }
+  .slide.long { overflow-y: auto; }
+  .slide.long .content { justify-content: flex-start; padding-block-start: 8px; }
+  .flow .node { font-size: 14px; padding: 10px 12px; }
+  .footer span:first-child { max-width: 68%; }
+}
+
+@media (max-width: 480px) {
+  .two, .three, .compare { grid-template-columns: 1fr; }
+  .slide { overflow-y: auto; }
+  .slide .content { justify-content: flex-start; padding-block-start: 12px; }
+  .title { font-size: 28px; }
+  .cover .title { font-size: 40px; }
+}
+</style>
+</head>
+<body>
+<main class="deck" aria-label="ارائه اسلایدی داکر">
+<section class="slide cover active">
+  <div class="content">
+    <div class="eyebrow">کارگاه داکر · ویژهٔ توسعهٔ فرانت‌اند</div>
+    <h1 class="title">از <span class="en accent">Image</span> تا اجرای چندسرویسی</h1>
+    <p class="subtitle">مدل ذهنی داکر، ساخت <span class="en">Image</span> فرانت، شبکه و <span class="en">Compose</span>؛ و <span class="en">Swarm</span> به‌عنوان پل ارکستراسیون به <span class="en">Kubernetes.</span></p>
+    <div class="pills">
+      <span class="pill">خلاصهٔ جلسهٔ ۰۱</span>
+      <span class="pill">مناسب ارائهٔ مقدماتی</span>
+      <span class="pill">یک جلسهٔ بلند یا چند بخش</span>
+    </div>
+  </div>
+  <div class="footer"><span>داکر برای فرانت‌اند</span><span>کلیدهای جهت‌نما برای جابه‌جایی</span></div>
+</section>
+
+<section class="slide">
+  <div class="eyebrow">۰۱ · هدف جلسه</div>
+  <div class="content">
+    <h2 class="title">در پایان چه چیزی باید بلد باشیم؟</h2>
+    <div class="grid two">
+      <article class="card"><h3>مدل ذهنی</h3><p>تفاوت <b class="en">Image</b> و <b class="en">Container</b> را توضیح دهیم و بدانیم داکر چه مشکلی را حل می‌کند.</p></article>
+      <article class="card"><h3>ساخت فرانت</h3><p><span class="en">Dockerfile</span> ساده و الگوی <b class="en">multi-stage</b> را بخوانیم و <span class="en">Image</span> قابل‌اجرا بسازیم.</p></article>
+      <article class="card"><h3>شبکه و <span class="en">Compose</span></h3><p>فرق پورت داخلی و پورت میزبان را بشناسیم و دو سرویس را با هم اجرا کنیم.</p></article>
+      <article class="card"><h3>گام بعدی</h3><p>بفهمیم ارکستراسیون چرا لازم می‌شود و <span class="en">Swarm</span> چه مفهومی را به <span class="en">Kubernetes</span> وصل می‌کند.</p></article>
+    </div>
+  </div>
+  <div class="footer"><span>هدف: دانستن مدل، نه حفظ کل اکوسیستم</span><span>۰۲</span></div>
+</section>
+
+<section class="slide">
+  <div class="eyebrow">۰۲ · چرا <span class="en">Docker</span>؟</div>
+  <div class="content">
+    <h2 class="title">«روی سیستم من کار می‌کند» را کمتر بشنویم</h2>
+    <p class="big">داکر، ساختن و جابه‌جایی یک بستهٔ <span class="accent">قابل‌تکرار</span> از اپلیکیشن را ساده می‌کند.</p>
+    <div class="flow">
+      <div class="node">سورس فرانت</div>
+      <span class="arrow" dir="ltr" aria-hidden="true">←</span>
+      <div class="node"><span class="en">Build</span></div>
+      <span class="arrow" dir="ltr" aria-hidden="true">←</span>
+      <div class="node"><span class="en">Image</span></div>
+      <span class="arrow" dir="ltr" aria-hidden="true">←</span>
+      <div class="node">اجرا در همه‌جا</div>
+    </div>
+    <div class="grid three">
+      <article class="card"><h3>لپ‌تاپ</h3><p>محیط یکسان برای توسعه‌دهنده‌ها</p></article>
+      <article class="card"><h3><span class="en">CI</span></h3><p>همان دستور ساخت در خط لولهٔ بیلد</p></article>
+      <article class="card"><h3>سرور</h3><p>همان <span class="en">Image</span>، بدون کپی دستی فایل‌ها</p></article>
+    </div>
+    <div class="highlight">داکر <span class="en">Container</span> را اختراع نکرد؛ ساخت، اشتراک‌گذاری و اجرای آن را برای توسعه‌دهنده ساده و در دسترس کرد.</div>
+  </div>
+  <div class="footer"><span>از بسته‌بندی تا اجرای قابل‌تکرار</span><span>۰۳</span></div>
+</section>
+
+<section class="slide">
+  <div class="eyebrow">۰۳ · تاریخچهٔ کوتاه</div>
+  <div class="content">
+    <h2 class="title">از نصب روی سرور تا بسته‌بندی استاندارد</h2>
+    <div class="grid two">
+      <article class="card"><h3>قبل از <span class="en">Container</span></h3><p>اپ روی سرور یا <span class="en">VM</span> نصب می‌شود. دردسر رایج: «روی سیستم من کار می‌کند».</p></article>
+      <article class="card"><h3><span class="en">Linux containers</span></h3><p><span class="en">cgroups</span> و <span class="en">namespaces</span> ایزوله‌سازی سبک فرایند می‌دهند؛ ابزار استاندارد برای همه نبود.</p></article>
+      <article class="card"><h3>۲۰۱۳ — <span class="en">Docker</span></h3><p>بسته‌بندی <span class="en">Image</span> و تجربهٔ ساده برای برنامه‌نویس. <span class="en">Container</span> برای تیم‌ها ملموس شد.</p></article>
+      <article class="card"><h3>بعد از <span class="en">Docker</span></h3><p><span class="en">Compose</span>، <span class="en">Registry</span>، سپس ارکستراسیون: <span class="en">Swarm</span> و بعد <span class="en">Kubernetes</span>.</p></article>
+    </div>
+    <div class="highlight">جزئیات <span class="en">kernel</span> و تاریخچهٔ <span class="en">LXC</span> / <span class="en">rkt</span> / <span class="en">Podman</span> را امروز عمیق نمی‌شویم.</div>
+  </div>
+  <div class="footer"><span>Docker مفهوم را ساده و قابل‌اشتراک کرد</span><span>۰۴</span></div>
+</section>
+
+<section class="slide">
+  <div class="eyebrow">۰۴ · مفاهیم پایه</div>
+  <div class="content">
+    <h2 class="title"><span class="en">Image ≠ Container</span></h2>
+    <div class="compare">
+      <article class="card">
+        <span class="label">قالب</span>
+        <h3><span class="en">Image</span></h3>
+        <p>قالب لایه‌لایه و فقط‌خواندنیِ برنامه؛ از آن می‌توان چند اجرا ساخت.</p>
+        <p class="small">تشبیه: کلاس یا بستهٔ آماده</p>
+      </article>
+      <article class="card">
+        <span class="label orange-label">اجرا</span>
+        <h3><span class="en">Container</span></h3>
+        <p>نمونهٔ در حال اجرای یک <span class="en">Image</span>، با فرایند و فایل‌سیستم ایزوله.</p>
+        <p class="small">تشبیه: نمونهٔ ساخته‌شده از کلاس</p>
+      </article>
+    </div>
+    <div class="flow">
+      <div class="node"><span class="en">Dockerfile</span></div>
+      <span class="arrow" dir="ltr" aria-hidden="true">←</span>
+      <div class="node"><span class="en">Image</span></div>
+      <span class="arrow" dir="ltr" aria-hidden="true">←</span>
+      <div class="node"><span class="en">Container</span></div>
+    </div>
+    <div class="grid two">
+      <article class="card"><h3><span class="en">Registry</span></h3><p>انبار <span class="en">Image</span>ها برای انتشار و دریافت؛ مثل <span class="en">Docker Hub.</span></p></article>
+      <article class="card"><h3><span class="en">Volume</span></h3><p>راه نگه‌داشتن داده بیرون از عمر کوتاه <span class="en">Container.</span></p></article>
+    </div>
+  </div>
+  <div class="footer"><span><span class="en">Dockerfile</span> دستور ساخت است؛ <span class="en">Registry</span> محل نگه‌داری <span class="en">Image</span></span><span>۰۵</span></div>
+</section>
+
+<section class="slide">
+  <div class="eyebrow">۰۵ · <span class="en">VM</span> در برابر <span class="en">Container</span></div>
+  <div class="content">
+    <h2 class="title"><span class="en">Container</span> یک <span class="en">VM</span> کوچک نیست</h2>
+    <div class="compare">
+      <article class="card">
+        <span class="label orange-label">ماشین مجازی</span>
+        <h3><span class="en">VM</span></h3>
+        <div class="path">
+          <span class="en">Hypervisor</span>
+          <span class="step"><span class="arrow" dir="ltr" aria-hidden="true">←</span> سیستم‌عامل مهمان کامل</span>
+          <span class="step"><span class="arrow" dir="ltr" aria-hidden="true">←</span> برنامه</span>
+        </div>
+        <ul>
+          <li>سنگین‌تر و معمولاً دیرتر آماده می‌شود</li>
+          <li>مرز ایزوله‌سازی در سطح <span class="en">VM</span></li>
+          <li>مناسب اجرای سیستم‌عامل‌های متفاوت</li>
+        </ul>
+      </article>
+      <article class="card">
+        <span class="label">کانتینر</span>
+        <h3><span class="en">Docker</span></h3>
+        <div class="path">
+          <span>سیستم‌عامل میزبان و <span class="en">Kernel</span> مشترک</span>
+          <span class="step"><span class="arrow" dir="ltr" aria-hidden="true">←</span> فرایند ایزوله</span>
+        </div>
+        <ul>
+          <li>سبک‌تر و معمولاً سریع‌تر برای شروع</li>
+          <li>ایزوله‌سازی در سطح فرایند؛ مدل امنیتی متفاوت</li>
+          <li>مناسب بسته‌بندی و اجرای یکسان اپ</li>
+        </ul>
+      </article>
+    </div>
+    <div class="highlight"><span class="en">Container</span> معمولاً سیستم‌عامل مهمان جدا ندارد؛ روی <span class="en">Kernel</span> میزبان تکیه می‌کند. بنابراین <span class="en">Container</span> و <span class="en">VM</span> جایگزین یک‌به‌یک هم نیستند.</div>
+  </div>
+  <div class="footer"><span>سبک‌تر، اما با مرز ایزوله‌سازی متفاوت</span><span>۰۶</span></div>
+</section>
+
+<section class="slide long">
+  <div class="eyebrow">۰۶ · <span class="en">Dockerfile</span> برای فرانت</div>
+  <div class="content">
+    <h2 class="title">از <span class="en">HTML</span> ساده تا <span class="en">Image</span> نهایی</h2>
+    <div class="grid two">
+      <div>
+        <div class="code">FROM nginx:1.27-alpine
+COPY index.html /usr/share/nginx/html/index.html
+EXPOSE 80</div>
+        <p class="small"><span class="en">docker build</span>، <span class="en">Image</span> را می‌سازد؛ <span class="en">docker run</span> از آن <span class="en">Container</span> روشن می‌کند.</p>
+      </div>
+      <div class="list">
+        <div class="item"><span class="num">۱</span><span><b class="en">FROM</b> — <span class="en">Image</span> پایه، مثلاً <span class="en">nginx</span> یا <span class="en">node</span></span></div>
+        <div class="item"><span class="num">۲</span><span><b class="en">COPY</b> — انتقال فایل از <span class="en">build context</span> به <span class="en">Image</span></span></div>
+        <div class="item"><span class="num">۳</span><span><b class="en">EXPOSE</b> — مستندسازی پورت داخلی؛ به‌تنهایی پورت میزبان را باز نمی‌کند</span></div>
+      </div>
+    </div>
+    <div class="highlight">نمونهٔ اجرا: <span class="en">docker run --rm -p 8080:80 fe-docker-simple</span><br>مرورگر به پورت ۸۰۸۰ میزبان وصل می‌شود؛ <span class="en">nginx</span> داخل <span class="en">Container</span> پورت ۸۰ را سرو می‌کند.</div>
+    <div class="pills">
+      <span class="pill"><span class="en">WORKDIR</span> پوشهٔ کاری</span>
+      <span class="pill"><span class="en">RUN</span> فرمان زمان ساخت</span>
+      <span class="pill"><span class="en">CMD</span> فرمان شروع <span class="en">Container</span></span>
+    </div>
+  </div>
+  <div class="footer"><span><span class="en">EXPOSE</span> پورت را <span class="en">publish</span> نمی‌کند؛ <span class="en">-p</span> این کار را انجام می‌دهد</span><span>۰۷</span></div>
+</section>
+
+<section class="slide long">
+  <div class="eyebrow">۰۷ · دستورات پرکاربرد</div>
+  <div class="content">
+    <h2 class="title">چرخهٔ روزمره؛ حفظ کردن لازم نیست</h2>
+    <div class="code">docker pull nginx:1.27-alpine
+docker build -t fe-docker-simple .
+docker images
+docker run --rm -p 8080:80 fe-docker-simple
+docker ps
+docker logs -f &lt;id&gt;
+docker exec -it &lt;id&gt; sh
+docker stop &lt;id&gt;</div>
+    <div class="pills">
+      <span class="pill"><span class="en">-p</span> پورت میزبان</span>
+      <span class="pill"><span class="en">-d</span> پس‌زمینه</span>
+      <span class="pill"><span class="en">--rm</span> پاک بعد از توقف</span>
+      <span class="pill"><span class="en">-v</span> <span class="en">volume</span></span>
+      <span class="pill"><span class="en">--name</span> نام ثابت</span>
+      <span class="pill"><span class="en">-e</span> متغیر محیطی</span>
+    </div>
+    <div class="highlight">لیست کامل، از جمله <span class="en">Compose</span> و <span class="en">Swarm</span>، در <span class="en">docker/commands.md</span> است.<br>پورت دمو: <span class="en">simple 8080</span> · <span class="en">semipro 8081</span> · <span class="en">advanced 8082</span> · <span class="en">compose 8083</span> · <span class="en">swarm 8084</span></div>
+  </div>
+  <div class="footer"><span><span class="en">build</span> / <span class="en">run</span> / <span class="en">ps</span> / <span class="en">logs</span> چرخهٔ دیباگ <span class="en">Image</span> فرانت است</span><span>۰۸</span></div>
+</section>
+
+<section class="slide">
+  <div class="eyebrow">۰۸ · الگوی حرفه‌ای‌تر</div>
+  <div class="content">
+    <h2 class="title"><span class="en">Multi-stage</span>: ابزار ساخت را از خروجی جدا کن</h2>
+    <div class="flow">
+      <div class="node">مرحلهٔ <span class="en">build</span><br><span class="small"><span class="en">Node</span> · نصب وابستگی‌ها · تولید <span class="en">dist</span></span></div>
+      <span class="arrow" dir="ltr" aria-hidden="true">←</span>
+      <div class="node">مرحلهٔ نهایی<br><span class="small"><span class="en">nginx</span> · فقط فایل‌های <span class="en">dist</span></span></div>
+    </div>
+    <div class="grid three">
+      <article class="card"><h3><span class="en">Image</span> کوچک‌تر</h3><p><span class="en">Node</span> و ابزارهای <span class="en">build</span> در <span class="en">Image</span> نهایی باقی نمی‌مانند.</p></article>
+      <article class="card"><h3>سطح حمله کمتر</h3><p><span class="en">Runtime</span> فقط اجزایی را دارد که واقعاً برای سرو لازم‌اند.</p></article>
+      <article class="card"><h3>ساخت کارآمدتر</h3><p>ترتیب درست <span class="en">COPY</span> کمک می‌کند از <span class="en">cache</span> لایه‌ها بهتر استفاده شود.</p></article>
+    </div>
+    <div class="code mt-lg">FROM node:22-alpine AS build
+# install + build → /app/dist
+FROM nginx:1.27-alpine
+COPY --from=build /app/dist /usr/share/nginx/html</div>
+  </div>
+  <div class="footer"><span>دمو <span class="en">semipro</span>: <span class="en">-p 8081:80</span> · اسم <span class="en">stage</span> اینجاست <span class="en">build</span></span><span>۰۹</span></div>
+</section>
+
+<section class="slide">
+  <div class="eyebrow">۰۹ · عادت‌های خوب</div>
+  <div class="content">
+    <h2 class="title">سه بهینه‌سازی مهم در <span class="en">Dockerfile</span></h2>
+    <div class="grid three">
+      <article class="card">
+        <div class="num">۱</div>
+        <h3><span class="en">.dockerignore</span></h3>
+        <p>مواردی مثل <span class="en">node_modules</span> و <span class="en">.git</span> را از <span class="en">build context</span> بیرون بگذار؛ بیلد سبک‌تر و سریع‌تر می‌شود.</p>
+      </article>
+      <article class="card">
+        <div class="num">۲</div>
+        <h3>ترتیب لایه‌ها</h3>
+        <p>اول <span class="en">manifest</span> و <span class="en">lockfile</span>، بعد سورس را کپی کن تا تغییر کد، نصب وابستگی‌ها را بی‌دلیل تکرار نکند.</p>
+      </article>
+      <article class="card">
+        <div class="num">۳</div>
+        <h3>کاربر غیر <span class="en">root</span></h3>
+        <p>فرایند را با کاربر محدود اجرا کن؛ اصل امنیتی خوبی برای محیط‌های واقعی و <span class="en">Kubernetes</span> است.</p>
+      </article>
+    </div>
+    <div class="highlight">نکتهٔ اصلی: <span class="en">build</span> تمیز، <span class="en">cache</span> مؤثر و <span class="en">runtime</span> حداقلی؛ جزئیات امنیت تولیدی را جداگانه بررسی کنید.<br>دمو <span class="en">advanced</span>: <span class="en">docker run --rm -p 8082:8080 fe-docker-advanced</span> — داخل <span class="en">Container</span> پورت ۸۰۸۰ است (<span class="en">USER nginx</span>) و لپ‌تاپ به ۸۰۸۲ وصل می‌شود.</div>
+  </div>
+  <div class="footer"><span>کوچک، قابل‌تکرار، کم‌دسترسی</span><span>۱۰</span></div>
+</section>
+
+<section class="slide">
+  <div class="eyebrow">۱۰ · شبکه و پورت‌ها</div>
+  <div class="content">
+    <h2 class="title">دو مسیر متفاوت را از هم جدا کنیم</h2>
+    <div class="compare">
+      <article class="card">
+        <span class="label">کاربر <span class="arrow" dir="ltr" aria-hidden="true">←</span> برنامه</span>
+        <h3><span class="en">ports / -p</span></h3>
+        <p>پورت میزبان را به پورت <span class="en">Container</span> وصل می‌کند تا مرورگر یا میزبان به سرویس برسد.</p>
+        <div class="code mt">-p 8080:80</div>
+      </article>
+      <article class="card">
+        <span class="label orange-label"><span class="en">Container ↔ Container</span></span>
+        <h3>شبکهٔ داخلی</h3>
+        <p>در شبکهٔ <span class="en">Compose</span>، سرویس‌ها با نام سرویس همدیگر را پیدا می‌کنند.</p>
+        <div class="code mt">http://api:3000</div>
+      </article>
+    </div>
+    <div class="grid two mt">
+      <article class="card"><h3><span class="en">EXPOSE</span></h3><p>در <span class="en">Dockerfile</span>: فقط مستند می‌کند که برنامه داخل <span class="en">Container</span> چه پورتی دارد.</p></article>
+      <article class="card"><h3><span class="en">expose</span></h3><p>در <span class="en">Compose</span>: پورت داخلی شبکه را مشخص می‌کند؛ برای انتشار به میزبان نیست.</p></article>
+    </div>
+    <div class="highlight">داخل <span class="en">Container</span>، <span class="en">localhost</span> یعنی همان <span class="en">Container</span>؛ برای دسترسی به <span class="en">API</span> همسایه از نام سرویس مثل <span class="en">api</span> استفاده کن.</div>
+  </div>
+  <div class="footer"><span>نام سرویس در <span class="en">Compose</span> نقش <span class="en">DNS</span> داخلی دارد</span><span>۱۱</span></div>
+</section>
+
+<section class="slide">
+  <div class="eyebrow">۱۱ · انواع شبکه</div>
+  <div class="content">
+    <h2 class="title"><span class="en">Container</span>ها روی شبکهٔ مجازی حرف می‌زنند</h2>
+    <div class="grid three">
+      <article class="card"><h3><span class="en">default bridge</span></h3><p><span class="en">docker run</span> تکی، مثل دموی <span class="en">simple</span>. <span class="en">DNS</span> نام‌دار اینجا ضعیف است.</p></article>
+      <article class="card"><h3><span class="en">user-defined bridge</span></h3><p><span class="en">Compose</span> خودکار می‌سازد. نام سرویس همان <span class="en">hostname</span> است؛ الگوی چندسرویسه.</p></article>
+      <article class="card"><h3><span class="en">overlay</span></h3><p>برای چند <span class="en">Node</span> در <span class="en">Swarm</span>. امروز فقط اشاره؛ عمیق نمی‌شویم.</p></article>
+    </div>
+    <div class="highlight"><span class="en">host</span> شبکه را با میزبان یکی می‌کند و <span class="en">none</span> شبکه ندارد. برای دموی فرانت لازم نیستند. تمرکز دوره: شبکهٔ پروژهٔ <span class="en">Compose</span>.</div>
+  </div>
+  <div class="footer"><span>چند سرویس را روی <span class="en">bridge</span> نام‌دار بگذارید، نه <span class="en">localhost</span></span><span>۱۲</span></div>
+</section>
+
+<section class="slide long">
+  <div class="eyebrow">۱۲ · <span class="en">Docker Compose</span></div>
+  <div class="content">
+    <h2 class="title">چند سرویس، یک فایل، یک دستور</h2>
+    <div class="grid two">
+      <div class="code">services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.web
+    ports:
+      - "8083:80"
+    depends_on:
+      - api
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    expose:
+      - "3000"</div>
+      <div class="list">
+        <div class="item"><span class="num">۱</span><span><b class="en">services</b>: واحدهای اپ مثل <span class="en">web</span> و <span class="en">api</span></span></div>
+        <div class="item"><span class="num">۲</span><span><b class="en">ports</b>: فقط <span class="en">web</span> از میزبان قابل‌دسترسی می‌شود</span></div>
+        <div class="item"><span class="num">۳</span><span><b class="en">depends_on</b>: ترتیب شروع را مشخص می‌کند؛ سلامت سرویس را تضمین نمی‌کند</span></div>
+        <div class="item"><span class="num">۴</span><span>شبکهٔ پروژه خودکار ساخته می‌شود؛ <span class="en">web</span> به <span class="en">http://api:3000</span> وصل می‌شود</span></div>
+      </div>
+    </div>
+    <div class="highlight">برای توسعه و دمو روی یک ماشین: <span class="en">docker compose up --build</span> · توقف و پاک‌سازی: <span class="en">docker compose down</span></div>
+    <p class="small"><span class="en">Compose</span> راهی ساده برای بالا آوردن فرانت، <span class="en">API</span> آزمایشی و سرویس‌های وابسته کنار هم است.</p>
+  </div>
+  <div class="footer"><span>یک فایل <span class="en">YAML</span> برای تعریف و اجرای چند سرویس</span><span>۱۳</span></div>
+</section>
+
+<section class="slide">
+  <div class="eyebrow">۱۳ · از <span class="en">Compose</span> تا ارکستراسیون</div>
+  <div class="content">
+    <h2 class="title">وقتی یک ماشین کافی نیست</h2>
+    <div class="flow">
+      <div class="node"><span class="en">Compose</span><br><span class="small">چند سرویس روی یک میزبان</span></div>
+      <span class="arrow" dir="ltr" aria-hidden="true">←</span>
+      <div class="node"><span class="en">Swarm</span><br><span class="small">کلاستر <span class="en">Docker</span></span></div>
+      <span class="arrow" dir="ltr" aria-hidden="true">←</span>
+      <div class="node"><span class="en">Kubernetes</span><br><span class="small">ارکستراسیون در مقیاس</span></div>
+    </div>
+    <div class="grid three">
+      <article class="card"><h3><span class="en">Desired state</span></h3><p>وضعیت مطلوب را اعلام می‌کنیم؛ مثلاً دو <span class="en">replica</span> از سرویس.</p></article>
+      <article class="card"><h3><span class="en">Service</span> و <span class="en">Task</span></h3><p>سرویس تعریف مطلوب است؛ <span class="en">Task</span> نمونهٔ اجرایی برنامه‌ریزی‌شده است.</p></article>
+      <article class="card"><h3>خودترمیمی مقدماتی</h3><p>اگر نمونه‌ای از کار بیفتد، ارکستراتور برای رسیدن به وضعیت مطلوب تلاش می‌کند.</p></article>
+    </div>
+    <div class="highlight"><span class="en">Swarm</span> اینجا پل مفهومی است، نه هدف نهایی: <span class="en">replica</span> و وضعیت مطلوب را می‌شناسیم؛ در جلسهٔ بعد سراغ <span class="en">Deployment</span> و <span class="en">Kubernetes</span> می‌رویم.</div>
+  </div>
+  <div class="footer"><span>نام <span class="en">Service</span> در <span class="en">Swarm</span> و <span class="en">Kubernetes</span> لزوماً معنای یکسان ندارد</span><span>۱۴</span></div>
+</section>
+
+<section class="slide long">
+  <div class="eyebrow">۱۴ · آناتومی <span class="en">stack.yaml</span></div>
+  <div class="content">
+    <h2 class="title"><span class="en">Stack</span>: وضعیت مطلوب را می‌نویسید</h2>
+    <div class="grid two">
+      <div class="code">version: "3.8"
+
+services:
+  web:
+    image: nginx:1.27-alpine
+    ports:
+      - "8084:80"
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: on-failure</div>
+      <div class="list">
+        <div class="item"><span class="num">۱</span><span><b class="en">image</b> نه <span class="en">build</span>: <span class="en">Image</span> از قبل آماده است</span></div>
+        <div class="item"><span class="num">۲</span><span><b class="en">ports</b>: <span class="en">8084:80</span> — پورت دموی <span class="en">Swarm</span> روی لپ‌تاپ</span></div>
+        <div class="item"><span class="num">۳</span><span><b class="en">deploy.replicas</b>: دو <span class="en">Task</span>؛ همان ایدهٔ <span class="en">Desired State</span></span></div>
+        <div class="item"><span class="num">۴</span><span><b class="en">restart_policy</b>: اگر <span class="en">Task</span> با خطا بمیرد، <span class="en">Swarm</span> جایش را پر می‌کند</span></div>
+      </div>
+    </div>
+    <div class="highlight">دمو: <span class="en">docker stack deploy -c stack.yaml fe-swarm</span> · مرورگر <span class="en">http://localhost:8084</span><br><span class="en">Service</span> اینجا واحد دیپلوی است؛ در <span class="en">Kubernetes</span> معنای شبکه‌ای دارد.</div>
+  </div>
+  <div class="footer"><span><span class="en">replicas: 2</span> را اینجا ببینید؛ در <span class="en">Kubernetes</span> با <span class="en">Deployment</span> برمی‌گردد</span><span>۱۵</span></div>
+</section>
+
+<section class="slide">
+  <div class="eyebrow">۱۵ · جمع‌بندی</div>
+  <div class="content">
+    <h2 class="title">شش نکته برای به‌خاطر سپردن</h2>
+    <div class="list">
+      <div class="item"><span class="num">۱</span><span><b><span class="en">Image</span> قالب است؛ <span class="en">Container</span> اجرای آن.</b></span></div>
+      <div class="item"><span class="num">۲</span><span><span class="en">Container</span> سبک‌تر از <span class="en">VM</span> است، اما <span class="en">Kernel</span> میزبان را به‌اشتراک می‌گذارد.</span></div>
+      <div class="item"><span class="num">۳</span><span>برای فرانت، <span class="en">multi-stage</span> خروجی <span class="en">build</span> را از ابزارهای ساخت جدا می‌کند.</span></div>
+      <div class="item"><span class="num">۴</span><span><span class="en">-p</span> برای دسترسی از میزبان است؛ نام سرویس برای ارتباط داخلی <span class="en">Compose.</span></span></div>
+      <div class="item"><span class="num">۵</span><span><span class="en">Compose</span> چند سرویس را با یک تعریف روی یک میزبان اجرا می‌کند.</span></div>
+      <div class="item"><span class="num">۶</span><span><span class="en">Swarm</span> مقدمهٔ مفهوم ارکستراسیون است؛ گام بعدی <span class="en">Kubernetes.</span></span></div>
+    </div>
+    <div class="highlight">تمرین پیشنهادی: <span class="en">Image</span> مربوط به <span class="en">semipro</span> را بساز و روی <span class="en">8081</span> اجرا کن؛ سپس با <span class="en">Compose</span> فرانت و <span class="en">API</span> را روی <span class="en">8083</span> بالا بیاور.</div>
+    <div class="endnote">پایان · پرسش‌ها و مرور دستورات</div>
+  </div>
+  <div class="footer"><span>بر پایهٔ <span class="en">docker/session-01.md</span></span><span>۱۶</span></div>
+</section>
+</main>
+
+<div class="controls" aria-label="کنترل اسلاید">
+  <button id="prev" type="button" aria-label="اسلاید قبلی"><i></i></button>
+  <span class="count" id="count" dir="ltr">۱ / ۱۶</span>
+  <button id="next" type="button" aria-label="اسلاید بعدی"><i></i></button>
+</div>
+<div class="bar" id="bar"></div>
+
+<script>
+(() => {
+  const slides = [...document.querySelectorAll(".slide")];
+  const count = document.getElementById("count");
+  const bar = document.getElementById("bar");
+  let i = 0;
+  const fa = (n) => String(n).replace(/[0-9]/g, (d) => "۰۱۲۳۴۵۶۷۸۹"[d]);
+
+  function show(n) {
+    i = (n + slides.length) % slides.length;
+    slides.forEach((s, k) => s.classList.toggle("active", k === i));
+    count.textContent = fa(i + 1) + " / " + fa(slides.length);
+    bar.style.width = ((i + 1) / slides.length * 100) + "%";
+  }
+
+  document.getElementById("prev").onclick = () => show(i - 1);
+  document.getElementById("next").onclick = () => show(i + 1);
+
+  document.addEventListener("keydown", (e) => {
+    if (["ArrowLeft", "ArrowDown", " ", "PageDown"].includes(e.key)) {
+      e.preventDefault();
+      show(i + 1);
+    }
+    if (["ArrowRight", "ArrowUp", "PageUp"].includes(e.key)) {
+      e.preventDefault();
+      show(i - 1);
+    }
+    if (e.key === "Home") show(0);
+    if (e.key === "End") show(slides.length - 1);
+  });
+
+  let x = null;
+  document.addEventListener("touchstart", (e) => {
+    x = e.changedTouches[0].screenX;
+  }, { passive: true });
+  document.addEventListener("touchend", (e) => {
+    if (x === null) return;
+    const d = e.changedTouches[0].screenX - x;
+    if (Math.abs(d) > 60) show(i + (d < 0 ? 1 : -1));
+    x = null;
+  }, { passive: true });
+
+  show(0);
+})();
+</script>
+</body>
+</html>

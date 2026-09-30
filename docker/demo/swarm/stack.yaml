@@ -1,0 +1,16 @@
+# Stack حداقلی برای دمو Swarm — پل به ارکستراسیون
+# توجه: این intro است، نه راهنمای production
+
+version: "3.8"
+
+services:
+  web:
+    image: nginx:1.27-alpine
+    ports:
+      - "8084:80"
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: on-failure
+    # در دمو واقعی می‌توانید Image خودتان را بگذارید
+    # configs / secrets را عمداً اینجا پیچیده‌سازی نمی‌کنیم
