@@ -480,11 +480,11 @@ body { overflow: hidden; }
   <div class="content">
     <div class="eyebrow">کارگاه داکر · ویژهٔ توسعهٔ فرانت‌اند</div>
     <h1 class="title">از <span class="en accent">Image</span> تا اجرای چندسرویسی</h1>
-    <p class="subtitle">مدل ذهنی داکر، ساخت <span class="en">Image</span> فرانت، شبکه و <span class="en">Compose</span>؛ و نگاهی کوتاه به <span class="en">Swarm</span> به‌عنوان پلی برای <span class="en">Kubernetes.</span></p>
+    <p class="subtitle">مدل ذهنی داکر، ساخت <span class="en">Image</span> فرانت، شبکه و <span class="en">Compose</span>؛ و <span class="en">Swarm</span> به‌عنوان پل ارکستراسیون به <span class="en">Kubernetes.</span></p>
     <div class="pills">
       <span class="pill">خلاصهٔ جلسهٔ ۰۱</span>
       <span class="pill">مناسب ارائهٔ مقدماتی</span>
-      <span class="pill">حدود ۱۰ اسلاید مفهومی</span>
+      <span class="pill">یک جلسهٔ بلند یا چند بخش</span>
     </div>
   </div>
   <div class="footer"><span>داکر برای فرانت‌اند</span><span>کلیدهای جهت‌نما برای جابه‌جایی</span></div>
@@ -529,7 +529,22 @@ body { overflow: hidden; }
 </section>
 
 <section class="slide">
-  <div class="eyebrow">۰۳ · مفاهیم پایه</div>
+  <div class="eyebrow">۰۳ · تاریخچهٔ کوتاه</div>
+  <div class="content">
+    <h2 class="title">از نصب روی سرور تا بسته‌بندی استاندارد</h2>
+    <div class="grid two">
+      <article class="card"><h3>قبل از <span class="en">Container</span></h3><p>اپ روی سرور یا <span class="en">VM</span> نصب می‌شود. دردسر رایج: «روی سیستم من کار می‌کند».</p></article>
+      <article class="card"><h3><span class="en">Linux containers</span></h3><p><span class="en">cgroups</span> و <span class="en">namespaces</span> ایزوله‌سازی سبک فرایند می‌دهند؛ ابزار استاندارد برای همه نبود.</p></article>
+      <article class="card"><h3>۲۰۱۳ — <span class="en">Docker</span></h3><p>بسته‌بندی <span class="en">Image</span> و تجربهٔ ساده برای برنامه‌نویس. <span class="en">Container</span> برای تیم‌ها ملموس شد.</p></article>
+      <article class="card"><h3>بعد از <span class="en">Docker</span></h3><p><span class="en">Compose</span>، <span class="en">Registry</span>، سپس ارکستراسیون: <span class="en">Swarm</span> و بعد <span class="en">Kubernetes</span>.</p></article>
+    </div>
+    <div class="highlight">جزئیات <span class="en">kernel</span> و تاریخچهٔ <span class="en">LXC</span> / <span class="en">rkt</span> / <span class="en">Podman</span> را امروز عمیق نمی‌شویم.</div>
+  </div>
+  <div class="footer"><span>Docker مفهوم را ساده و قابل‌اشتراک کرد</span><span>۰۴</span></div>
+</section>
+
+<section class="slide">
+  <div class="eyebrow">۰۴ · مفاهیم پایه</div>
   <div class="content">
     <h2 class="title"><span class="en">Image ≠ Container</span></h2>
     <div class="compare">
@@ -558,11 +573,11 @@ body { overflow: hidden; }
       <article class="card"><h3><span class="en">Volume</span></h3><p>راه نگه‌داشتن داده بیرون از عمر کوتاه <span class="en">Container.</span></p></article>
     </div>
   </div>
-  <div class="footer"><span><span class="en">Dockerfile</span> دستور ساخت است؛ <span class="en">Registry</span> محل نگه‌داری <span class="en">Image</span></span><span>۰۴</span></div>
+  <div class="footer"><span><span class="en">Dockerfile</span> دستور ساخت است؛ <span class="en">Registry</span> محل نگه‌داری <span class="en">Image</span></span><span>۰۵</span></div>
 </section>
 
 <section class="slide">
-  <div class="eyebrow">۰۴ · <span class="en">VM</span> در برابر <span class="en">Container</span></div>
+  <div class="eyebrow">۰۵ · <span class="en">VM</span> در برابر <span class="en">Container</span></div>
   <div class="content">
     <h2 class="title"><span class="en">Container</span> یک <span class="en">VM</span> کوچک نیست</h2>
     <div class="compare">
@@ -596,11 +611,11 @@ body { overflow: hidden; }
     </div>
     <div class="highlight"><span class="en">Container</span> معمولاً سیستم‌عامل مهمان جدا ندارد؛ روی <span class="en">Kernel</span> میزبان تکیه می‌کند. بنابراین <span class="en">Container</span> و <span class="en">VM</span> جایگزین یک‌به‌یک هم نیستند.</div>
   </div>
-  <div class="footer"><span>سبک‌تر، اما با مرز ایزوله‌سازی متفاوت</span><span>۰۵</span></div>
+  <div class="footer"><span>سبک‌تر، اما با مرز ایزوله‌سازی متفاوت</span><span>۰۶</span></div>
 </section>
 
 <section class="slide long">
-  <div class="eyebrow">۰۵ · <span class="en">Dockerfile</span> برای فرانت</div>
+  <div class="eyebrow">۰۶ · <span class="en">Dockerfile</span> برای فرانت</div>
   <div class="content">
     <h2 class="title">از <span class="en">HTML</span> ساده تا <span class="en">Image</span> نهایی</h2>
     <div class="grid two">
@@ -623,11 +638,36 @@ EXPOSE 80</div>
       <span class="pill"><span class="en">CMD</span> فرمان شروع <span class="en">Container</span></span>
     </div>
   </div>
-  <div class="footer"><span><span class="en">EXPOSE</span> پورت را <span class="en">publish</span> نمی‌کند؛ <span class="en">-p</span> این کار را انجام می‌دهد</span><span>۰۶</span></div>
+  <div class="footer"><span><span class="en">EXPOSE</span> پورت را <span class="en">publish</span> نمی‌کند؛ <span class="en">-p</span> این کار را انجام می‌دهد</span><span>۰۷</span></div>
+</section>
+
+<section class="slide long">
+  <div class="eyebrow">۰۷ · دستورات پرکاربرد</div>
+  <div class="content">
+    <h2 class="title">چرخهٔ روزمره؛ حفظ کردن لازم نیست</h2>
+    <div class="code">docker pull nginx:1.27-alpine
+docker build -t fe-docker-simple .
+docker images
+docker run --rm -p 8080:80 fe-docker-simple
+docker ps
+docker logs -f &lt;id&gt;
+docker exec -it &lt;id&gt; sh
+docker stop &lt;id&gt;</div>
+    <div class="pills">
+      <span class="pill"><span class="en">-p</span> پورت میزبان</span>
+      <span class="pill"><span class="en">-d</span> پس‌زمینه</span>
+      <span class="pill"><span class="en">--rm</span> پاک بعد از توقف</span>
+      <span class="pill"><span class="en">-v</span> <span class="en">volume</span></span>
+      <span class="pill"><span class="en">--name</span> نام ثابت</span>
+      <span class="pill"><span class="en">-e</span> متغیر محیطی</span>
+    </div>
+    <div class="highlight">لیست کامل، از جمله <span class="en">Compose</span> و <span class="en">Swarm</span>، در <span class="en">docker/commands.md</span> است.<br>پورت دمو: <span class="en">simple 8080</span> · <span class="en">semipro 8081</span> · <span class="en">advanced 8082</span> · <span class="en">compose 8083</span> · <span class="en">swarm 8084</span></div>
+  </div>
+  <div class="footer"><span><span class="en">build</span> / <span class="en">run</span> / <span class="en">ps</span> / <span class="en">logs</span> چرخهٔ دیباگ <span class="en">Image</span> فرانت است</span><span>۰۸</span></div>
 </section>
 
 <section class="slide">
-  <div class="eyebrow">۰۶ · الگوی حرفه‌ای‌تر</div>
+  <div class="eyebrow">۰۸ · الگوی حرفه‌ای‌تر</div>
   <div class="content">
     <h2 class="title"><span class="en">Multi-stage</span>: ابزار ساخت را از خروجی جدا کن</h2>
     <div class="flow">
@@ -645,11 +685,11 @@ EXPOSE 80</div>
 FROM nginx:1.27-alpine
 COPY --from=build /app/dist /usr/share/nginx/html</div>
   </div>
-  <div class="footer"><span>کارخانهٔ <span class="en">build</span> جدا؛ در خروجی فقط محصول نهایی</span><span>۰۷</span></div>
+  <div class="footer"><span>دمو <span class="en">semipro</span>: <span class="en">-p 8081:80</span> · اسم <span class="en">stage</span> اینجاست <span class="en">build</span></span><span>۰۹</span></div>
 </section>
 
 <section class="slide">
-  <div class="eyebrow">۰۷ · عادت‌های خوب</div>
+  <div class="eyebrow">۰۹ · عادت‌های خوب</div>
   <div class="content">
     <h2 class="title">سه بهینه‌سازی مهم در <span class="en">Dockerfile</span></h2>
     <div class="grid three">
@@ -669,13 +709,13 @@ COPY --from=build /app/dist /usr/share/nginx/html</div>
         <p>فرایند را با کاربر محدود اجرا کن؛ اصل امنیتی خوبی برای محیط‌های واقعی و <span class="en">Kubernetes</span> است.</p>
       </article>
     </div>
-    <div class="highlight">نکتهٔ اصلی: <span class="en">build</span> تمیز، <span class="en">cache</span> مؤثر و <span class="en">runtime</span> حداقلی؛ جزئیات امنیت تولیدی را جداگانه بررسی کنید.</div>
+    <div class="highlight">نکتهٔ اصلی: <span class="en">build</span> تمیز، <span class="en">cache</span> مؤثر و <span class="en">runtime</span> حداقلی؛ جزئیات امنیت تولیدی را جداگانه بررسی کنید.<br>دمو <span class="en">advanced</span>: <span class="en">docker run --rm -p 8082:8080 fe-docker-advanced</span> — داخل <span class="en">Container</span> پورت ۸۰۸۰ است (<span class="en">USER nginx</span>) و لپ‌تاپ به ۸۰۸۲ وصل می‌شود.</div>
   </div>
-  <div class="footer"><span>کوچک، قابل‌تکرار، کم‌دسترسی</span><span>۰۸</span></div>
+  <div class="footer"><span>کوچک، قابل‌تکرار، کم‌دسترسی</span><span>۱۰</span></div>
 </section>
 
 <section class="slide">
-  <div class="eyebrow">۰۸ · شبکه و پورت‌ها</div>
+  <div class="eyebrow">۱۰ · شبکه و پورت‌ها</div>
   <div class="content">
     <h2 class="title">دو مسیر متفاوت را از هم جدا کنیم</h2>
     <div class="compare">
@@ -698,11 +738,25 @@ COPY --from=build /app/dist /usr/share/nginx/html</div>
     </div>
     <div class="highlight">داخل <span class="en">Container</span>، <span class="en">localhost</span> یعنی همان <span class="en">Container</span>؛ برای دسترسی به <span class="en">API</span> همسایه از نام سرویس مثل <span class="en">api</span> استفاده کن.</div>
   </div>
-  <div class="footer"><span>نام سرویس در <span class="en">Compose</span> نقش <span class="en">DNS</span> داخلی دارد</span><span>۰۹</span></div>
+  <div class="footer"><span>نام سرویس در <span class="en">Compose</span> نقش <span class="en">DNS</span> داخلی دارد</span><span>۱۱</span></div>
+</section>
+
+<section class="slide">
+  <div class="eyebrow">۱۱ · انواع شبکه</div>
+  <div class="content">
+    <h2 class="title"><span class="en">Container</span>ها روی شبکهٔ مجازی حرف می‌زنند</h2>
+    <div class="grid three">
+      <article class="card"><h3><span class="en">default bridge</span></h3><p><span class="en">docker run</span> تکی، مثل دموی <span class="en">simple</span>. <span class="en">DNS</span> نام‌دار اینجا ضعیف است.</p></article>
+      <article class="card"><h3><span class="en">user-defined bridge</span></h3><p><span class="en">Compose</span> خودکار می‌سازد. نام سرویس همان <span class="en">hostname</span> است؛ الگوی چندسرویسه.</p></article>
+      <article class="card"><h3><span class="en">overlay</span></h3><p>برای چند <span class="en">Node</span> در <span class="en">Swarm</span>. امروز فقط اشاره؛ عمیق نمی‌شویم.</p></article>
+    </div>
+    <div class="highlight"><span class="en">host</span> شبکه را با میزبان یکی می‌کند و <span class="en">none</span> شبکه ندارد. برای دموی فرانت لازم نیستند. تمرکز دوره: شبکهٔ پروژهٔ <span class="en">Compose</span>.</div>
+  </div>
+  <div class="footer"><span>چند سرویس را روی <span class="en">bridge</span> نام‌دار بگذارید، نه <span class="en">localhost</span></span><span>۱۲</span></div>
 </section>
 
 <section class="slide long">
-  <div class="eyebrow">۰۹ · <span class="en">Docker Compose</span></div>
+  <div class="eyebrow">۱۲ · <span class="en">Docker Compose</span></div>
   <div class="content">
     <h2 class="title">چند سرویس، یک فایل، یک دستور</h2>
     <div class="grid two">
@@ -731,11 +785,11 @@ COPY --from=build /app/dist /usr/share/nginx/html</div>
     <div class="highlight">برای توسعه و دمو روی یک ماشین: <span class="en">docker compose up --build</span> · توقف و پاک‌سازی: <span class="en">docker compose down</span></div>
     <p class="small"><span class="en">Compose</span> راهی ساده برای بالا آوردن فرانت، <span class="en">API</span> آزمایشی و سرویس‌های وابسته کنار هم است.</p>
   </div>
-  <div class="footer"><span>یک فایل <span class="en">YAML</span> برای تعریف و اجرای چند سرویس</span><span>۱۰</span></div>
+  <div class="footer"><span>یک فایل <span class="en">YAML</span> برای تعریف و اجرای چند سرویس</span><span>۱۳</span></div>
 </section>
 
 <section class="slide">
-  <div class="eyebrow">۱۰ · از <span class="en">Compose</span> تا ارکستراسیون</div>
+  <div class="eyebrow">۱۳ · از <span class="en">Compose</span> تا ارکستراسیون</div>
   <div class="content">
     <h2 class="title">وقتی یک ماشین کافی نیست</h2>
     <div class="flow">
@@ -752,11 +806,39 @@ COPY --from=build /app/dist /usr/share/nginx/html</div>
     </div>
     <div class="highlight"><span class="en">Swarm</span> اینجا پل مفهومی است، نه هدف نهایی: <span class="en">replica</span> و وضعیت مطلوب را می‌شناسیم؛ در جلسهٔ بعد سراغ <span class="en">Deployment</span> و <span class="en">Kubernetes</span> می‌رویم.</div>
   </div>
-  <div class="footer"><span>نام <span class="en">Service</span> در <span class="en">Swarm</span> و <span class="en">Kubernetes</span> لزوماً معنای یکسان ندارد</span><span>۱۱</span></div>
+  <div class="footer"><span>نام <span class="en">Service</span> در <span class="en">Swarm</span> و <span class="en">Kubernetes</span> لزوماً معنای یکسان ندارد</span><span>۱۴</span></div>
+</section>
+
+<section class="slide long">
+  <div class="eyebrow">۱۴ · آناتومی <span class="en">stack.yaml</span></div>
+  <div class="content">
+    <h2 class="title"><span class="en">Stack</span>: وضعیت مطلوب را می‌نویسید</h2>
+    <div class="grid two">
+      <div class="code">version: "3.8"
+
+services:
+  web:
+    image: nginx:1.27-alpine
+    ports:
+      - "8084:80"
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: on-failure</div>
+      <div class="list">
+        <div class="item"><span class="num">۱</span><span><b class="en">image</b> نه <span class="en">build</span>: <span class="en">Image</span> از قبل آماده است</span></div>
+        <div class="item"><span class="num">۲</span><span><b class="en">ports</b>: <span class="en">8084:80</span> — پورت دموی <span class="en">Swarm</span> روی لپ‌تاپ</span></div>
+        <div class="item"><span class="num">۳</span><span><b class="en">deploy.replicas</b>: دو <span class="en">Task</span>؛ همان ایدهٔ <span class="en">Desired State</span></span></div>
+        <div class="item"><span class="num">۴</span><span><b class="en">restart_policy</b>: اگر <span class="en">Task</span> با خطا بمیرد، <span class="en">Swarm</span> جایش را پر می‌کند</span></div>
+      </div>
+    </div>
+    <div class="highlight">دمو: <span class="en">docker stack deploy -c stack.yaml fe-swarm</span> · مرورگر <span class="en">http://localhost:8084</span><br><span class="en">Service</span> اینجا واحد دیپلوی است؛ در <span class="en">Kubernetes</span> معنای شبکه‌ای دارد.</div>
+  </div>
+  <div class="footer"><span><span class="en">replicas: 2</span> را اینجا ببینید؛ در <span class="en">Kubernetes</span> با <span class="en">Deployment</span> برمی‌گردد</span><span>۱۵</span></div>
 </section>
 
 <section class="slide">
-  <div class="eyebrow">۱۱ · جمع‌بندی</div>
+  <div class="eyebrow">۱۵ · جمع‌بندی</div>
   <div class="content">
     <h2 class="title">شش نکته برای به‌خاطر سپردن</h2>
     <div class="list">
@@ -767,16 +849,16 @@ COPY --from=build /app/dist /usr/share/nginx/html</div>
       <div class="item"><span class="num">۵</span><span><span class="en">Compose</span> چند سرویس را با یک تعریف روی یک میزبان اجرا می‌کند.</span></div>
       <div class="item"><span class="num">۶</span><span><span class="en">Swarm</span> مقدمهٔ مفهوم ارکستراسیون است؛ گام بعدی <span class="en">Kubernetes.</span></span></div>
     </div>
-    <div class="highlight">تمرین پیشنهادی: <span class="en">Image</span> مربوط به <span class="en">semipro</span> را بساز و اجرا کن؛ سپس با <span class="en">Compose</span> فرانت و <span class="en">API</span> را بالا بیاور.</div>
+    <div class="highlight">تمرین پیشنهادی: <span class="en">Image</span> مربوط به <span class="en">semipro</span> را بساز و روی <span class="en">8081</span> اجرا کن؛ سپس با <span class="en">Compose</span> فرانت و <span class="en">API</span> را روی <span class="en">8083</span> بالا بیاور.</div>
     <div class="endnote">پایان · پرسش‌ها و مرور دستورات</div>
   </div>
-  <div class="footer"><span>بر پایهٔ <span class="en">docker/session-01.md</span></span><span>۱۲</span></div>
+  <div class="footer"><span>بر پایهٔ <span class="en">docker/session-01.md</span></span><span>۱۶</span></div>
 </section>
 </main>
 
 <div class="controls" aria-label="کنترل اسلاید">
   <button id="prev" type="button" aria-label="اسلاید قبلی"><i></i></button>
-  <span class="count" id="count" dir="ltr">۱ / ۱۲</span>
+  <span class="count" id="count" dir="ltr">۱ / ۱۶</span>
   <button id="next" type="button" aria-label="اسلاید بعدی"><i></i></button>
 </div>
 <div class="bar" id="bar"></div>
